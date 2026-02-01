@@ -41,9 +41,9 @@ CONFIGURE_ARGS += \
 
 CONFIGURE_VARS += \
 	xorg_cv_malloc0_returns_null=no \
-	CC_FOR_BUILD="gcc" \
-	CFLAGS_FOR_BUILD="" \
-	LDFLAGS_FOR_BUILD=""
+	CC_FOR_BUILD="$(HOSTCC)" \
+	CFLAGS_FOR_BUILD="$(HOST_CFLAGS)" \
+	LDFLAGS_FOR_BUILD="$(HOST_LDFLAGS)"
 
 define Build/Configure
 	$(call Build/Configure/Default)
@@ -51,7 +51,7 @@ endef
 
 define Build/Compile
 	# Build makekeys with host compiler first
-	$(MAKE) -C $(PKG_BUILD_DIR)/src/util CC="gcc" CFLAGS="" LDFLAGS=""
+	$(MAKE) -C $(PKG_BUILD_DIR)/src/util CC="$(HOSTCC)" CFLAGS="$(HOST_CFLAGS)" LDFLAGS="$(HOST_LDFLAGS)"
 	# Then build the rest with cross compiler
 	$(call Build/Compile/Default)
 endef

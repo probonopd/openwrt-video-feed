@@ -23,7 +23,7 @@ define Package/libdrm
   SUBMENU:=Video
   TITLE:=Direct Rendering Manager library
   URL:=https://dri.freedesktop.org/
-  DEPENDS:=+libpciaccess
+  DEPENDS:=+libpciaccess +libudev-zero
 endef
 
 define Package/libdrm/description

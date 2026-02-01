@@ -36,7 +36,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential ccache ecj fastjar file g++ gawk \
             gettext git java-propose-classpath libelf-dev libncurses5-dev \
-            libncursesw5-dev libssl-dev python3 python3-setuptools python3-setuptools \
+            libncursesw5-dev libssl-dev python3 python3-setuptools \
             rsync unzip wget xsltproc zlib1g-dev zstd
 
       - name: Download and extract OpenWrt SDK
@@ -64,133 +64,133 @@ jobs:
           
           # Build core X11 protocol packages first
           echo "Building xorgproto..."
-          make package/xorgproto/compile V=s || true
+          make package/xorgproto/compile V=s
           
           echo "Building xorg-macros..."
-          make package/xorg-macros/compile V=s || true
+          make package/xorg-macros/compile V=s
           
           echo "Building libxtrans..."
-          make package/libxtrans/compile V=s || true
+          make package/libxtrans/compile V=s
           
           echo "Building xcb-proto..."
-          make package/xcb-proto/compile V=s || true
+          make package/xcb-proto/compile V=s
 
       - name: Build X11 authentication libraries
         run: |
           cd sdk
           echo "Building libxau..."
-          make package/libxau/compile V=s || true
+          make package/libxau/compile V=s
           
           echo "Building libxdmcp..."
-          make package/libxdmcp/compile V=s || true
+          make package/libxdmcp/compile V=s
 
       - name: Build XCB and X11 libraries
         run: |
           cd sdk
           echo "Building libxcb..."
-          make package/libxcb/compile V=s || true
+          make package/libxcb/compile V=s
           
           echo "Building libx11..."
-          make package/libx11/compile V=s || true
+          make package/libx11/compile V=s
 
       - name: Build X11 extension libraries
         run: |
           cd sdk
           echo "Building libxext..."
-          make package/libxext/compile V=s || true
+          make package/libxext/compile V=s
           
           echo "Building libxfixes..."
-          make package/libxfixes/compile V=s || true
+          make package/libxfixes/compile V=s
           
           echo "Building libxrender..."
-          make package/libxrender/compile V=s || true
+          make package/libxrender/compile V=s
           
           echo "Building libxrandr..."
-          make package/libxrandr/compile V=s || true
+          make package/libxrandr/compile V=s
           
           echo "Building libxi..."
-          make package/libxi/compile V=s || true
+          make package/libxi/compile V=s
           
           echo "Building libxinerama..."
-          make package/libxinerama/compile V=s || true
+          make package/libxinerama/compile V=s
           
           echo "Building libxshmfence..."
-          make package/libxshmfence/compile V=s || true
+          make package/libxshmfence/compile V=s
 
       - name: Build X11 session libraries
         run: |
           cd sdk
           echo "Building libice..."
-          make package/libice/compile V=s || true
+          make package/libice/compile V=s
           
           echo "Building libsm..."
-          make package/libsm/compile V=s || true
+          make package/libsm/compile V=s
 
       - name: Build X11 toolkit libraries
         run: |
           cd sdk
           echo "Building libxt..."
-          make package/libxt/compile V=s || true
+          make package/libxt/compile V=s
           
           echo "Building libxmu..."
-          make package/libxmu/compile V=s || true
+          make package/libxmu/compile V=s
           
           echo "Building libxpm..."
-          make package/libxpm/compile V=s || true
+          make package/libxpm/compile V=s
           
           echo "Building libxaw..."
-          make package/libxaw/compile V=s || true
+          make package/libxaw/compile V=s
 
       - name: Build X11 font and misc libraries
         run: |
           cd sdk
           echo "Building libxfont2..."
-          make package/libxfont2/compile V=s || true
+          make package/libxfont2/compile V=s
           
           echo "Building libxkbfile..."
-          make package/libxkbfile/compile V=s || true
+          make package/libxkbfile/compile V=s
           
           echo "Building libxft..."
-          make package/libxft/compile V=s || true
+          make package/libxft/compile V=s
           
           echo "Building libpciaccess..."
-          make package/libpciaccess/compile V=s || true
+          make package/libpciaccess/compile V=s
           
           echo "Building libxcvt..."
-          make package/libxcvt/compile V=s || true
+          make package/libxcvt/compile V=s
 
       - name: Build XLibre X server
         run: |
           cd sdk
           echo "Building xlibre..."
-          make package/xlibre/compile V=s || true
+          make package/xlibre/compile V=s
 
       - name: Build X11 input drivers
         run: |
           cd sdk
           echo "Building xf86-input-evdev..."
-          make package/xf86-input-evdev/compile V=s || true
+          make package/xf86-input-evdev/compile V=s
           
           echo "Building xf86-input-libinput..."
-          make package/xf86-input-libinput/compile V=s || true
+          make package/xf86-input-libinput/compile V=s
 
       - name: Build X11 utilities
         run: |
           cd sdk
           echo "Building xkbcomp..."
-          make package/xkbcomp/compile V=s || true
+          make package/xkbcomp/compile V=s
           
           echo "Building xauth..."
-          make package/xauth/compile V=s || true
+          make package/xauth/compile V=s
           
           echo "Building xinit..."
-          make package/xinit/compile V=s || true
+          make package/xinit/compile V=s
           
           echo "Building xrandr..."
-          make package/xrandr/compile V=s || true
+          make package/xrandr/compile V=s
           
           echo "Building xterm..."
-          make package/xterm/compile V=s || true
+          make package/xterm/compile V=s
 
       - name: Collect build results
         run: |

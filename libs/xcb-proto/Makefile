@@ -41,7 +41,7 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/share/xcb
 	$(CP) $(PKG_INSTALL_DIR)/usr/share/xcb/*.xml $(1)/usr/share/xcb/
 	$(INSTALL_DIR) $(1)/usr/share/pkgconfig
-	$(SED) 's|$$$${pc_sysrootdir}||g' $(PKG_INSTALL_DIR)/usr/share/pkgconfig/xcb-proto.pc
+	$(SED) 's|\$${pc_sysrootdir}||g' $(PKG_INSTALL_DIR)/usr/share/pkgconfig/xcb-proto.pc
 	$(SED) 's|datadir=/usr/share|datadir=$(STAGING_DIR)/usr/share|g' $(PKG_INSTALL_DIR)/usr/share/pkgconfig/xcb-proto.pc
 	$(SED) 's|PYTHON_PREFIX=/usr|PYTHON_PREFIX=$(STAGING_DIR)/usr|g' $(PKG_INSTALL_DIR)/usr/share/pkgconfig/xcb-proto.pc
 	$(SED) 's|pythondir=.*|pythondir=$(STAGING_DIR)/usr/lib/python3/site-packages|g' $(PKG_INSTALL_DIR)/usr/share/pkgconfig/xcb-proto.pc
@@ -49,6 +49,9 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/usr/share/pkgconfig/*.pc $(1)/usr/lib/pkgconfig/
 	$(INSTALL_DIR) $(1)/usr/lib/python3/site-packages
+	# xcbgen may be installed in different locations depending on python version
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/python*/site-packages/xcbgen $(1)/usr/lib/python3/site-packages/ 2>/dev/null || \
+	$(CP) $(PKG_INSTALL_DIR)/usr/local/lib/python*/site-packages/xcbgen $(1)/usr/lib/python3/site-packages/ 2>/dev/null || \
 	$(CP) $(PKG_INSTALL_DIR)/usr/local/lib/python*/dist-packages/xcbgen $(1)/usr/lib/python3/site-packages/ 2>/dev/null || true
 endef
 

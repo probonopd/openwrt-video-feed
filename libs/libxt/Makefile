@@ -37,9 +37,9 @@ CONFIGURE_ARGS += \
 
 CONFIGURE_VARS += \
 	xorg_cv_malloc0_returns_null=no \
-	CC_FOR_BUILD="gcc" \
-	CFLAGS_FOR_BUILD="" \
-	LDFLAGS_FOR_BUILD=""
+	CC_FOR_BUILD="$(HOSTCC)" \
+	CFLAGS_FOR_BUILD="$(HOST_CFLAGS)" \
+	LDFLAGS_FOR_BUILD="$(HOST_LDFLAGS)"
 
 define Build/Configure
 	$(call Build/Configure/Default)
@@ -48,7 +48,7 @@ endef
 define Build/Compile
 	# Build makestrs with host compiler first if it exists
 	if [ -d $(PKG_BUILD_DIR)/util ]; then \
-		$(MAKE) -C $(PKG_BUILD_DIR)/util CC="gcc" CFLAGS="" LDFLAGS="" 2>/dev/null || true; \
+		$(MAKE) -C $(PKG_BUILD_DIR)/util CC="$(HOSTCC)" CFLAGS="$(HOST_CFLAGS)" LDFLAGS="$(HOST_LDFLAGS)" 2>/dev/null || true; \
 	fi
 	$(call Build/Compile/Default)
 endef

@@ -22,7 +22,7 @@ define Package/gershwin-loginwindow
   SUBMENU:=GNUstep
   TITLE:=Gershwin Login Window
   URL:=https://github.com/gershwin-desktop/gershwin-components
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-loginwindow/description

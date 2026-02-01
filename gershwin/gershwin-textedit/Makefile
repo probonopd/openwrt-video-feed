@@ -21,7 +21,7 @@ define Package/gershwin-textedit
   SUBMENU:=GNUstep
   TITLE:=Gershwin TextEdit
   URL:=https://github.com/gershwin-desktop/gershwin-textedit
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-textedit/description

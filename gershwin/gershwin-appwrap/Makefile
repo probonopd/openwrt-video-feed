@@ -22,7 +22,7 @@ define Package/gershwin-appwrap
   SUBMENU:=GNUstep
   TITLE:=Gershwin Application Wrapper
   URL:=https://github.com/gershwin-desktop/gershwin-components
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-appwrap/description

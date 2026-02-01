@@ -22,7 +22,7 @@ define Package/gershwin-plistupdate
   SUBMENU:=GNUstep
   TITLE:=Gershwin Plist Update Tool
   URL:=https://github.com/gershwin-desktop/gershwin-components
-  DEPENDS:=+gnustep-base +gnustep-make
+  DEPENDS:=+gnustep-base +gnustep-make @BROKEN
 endef
 
 define Package/gershwin-plistupdate/description

@@ -24,7 +24,7 @@ define Package/gershwin-menu
   SUBMENU:=GNUstep
   TITLE:=Gershwin Desktop Menu
   URL:=https://github.com/gershwin-desktop/gershwin-components
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-menu/description

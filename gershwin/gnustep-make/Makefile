@@ -24,7 +24,7 @@ define Package/gnustep-make
   SUBMENU:=GNUstep
   TITLE:=GNUstep Make
   URL:=https://github.com/gnustep/tools-make
-  DEPENDS:=+swift-corelibs-libdispatch
+  DEPENDS:=+swift-corelibs-libdispatch @BROKEN
 endef
 
 define Package/gnustep-make/description

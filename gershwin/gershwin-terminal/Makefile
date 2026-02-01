@@ -21,7 +21,7 @@ define Package/gershwin-terminal
   SUBMENU:=GNUstep
   TITLE:=Gershwin Terminal
   URL:=https://github.com/gershwin-desktop/gershwin-terminal
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-terminal/description

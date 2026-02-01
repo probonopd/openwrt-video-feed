@@ -21,7 +21,7 @@ define Package/gershwin-eau-theme
   SUBMENU:=GNUstep
   TITLE:=Gershwin Eau Theme
   URL:=https://github.com/gershwin-desktop/gershwin-eau-theme
-  DEPENDS:=+gnustep-gui
+  DEPENDS:=+gnustep-gui @BROKEN
 endef
 
 define Package/gershwin-eau-theme/description

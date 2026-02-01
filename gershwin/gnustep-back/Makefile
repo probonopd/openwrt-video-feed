@@ -24,7 +24,7 @@ define Package/gnustep-back
   SUBMENU:=GNUstep
   TITLE:=GNUstep Backend
   URL:=https://github.com/gnustep/libs-back
-  DEPENDS:=+gnustep-gui +libcairo +libX11 +libXft +libXext
+  DEPENDS:=+gnustep-gui +libcairo +libX11 +libXft +libXext @BROKEN
 endef
 
 define Package/gnustep-back/description

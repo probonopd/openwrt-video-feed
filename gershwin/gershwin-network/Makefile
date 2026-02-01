@@ -22,7 +22,7 @@ define Package/gershwin-network
   SUBMENU:=GNUstep
   TITLE:=Gershwin Network Preferences
   URL:=https://github.com/gershwin-desktop/gershwin-components
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-network/description

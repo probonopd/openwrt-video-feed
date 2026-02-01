@@ -22,7 +22,7 @@ define Package/gershwin-console
   SUBMENU:=GNUstep
   TITLE:=Gershwin Console
   URL:=https://github.com/gershwin-desktop/gershwin-components
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-console/description

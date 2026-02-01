@@ -22,7 +22,7 @@ define Package/gershwin-globalshortcuts
   SUBMENU:=GNUstep
   TITLE:=Gershwin Global Shortcuts
   URL:=https://github.com/gershwin-desktop/gershwin-components
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-globalshortcuts/description

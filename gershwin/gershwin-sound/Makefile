@@ -22,7 +22,7 @@ define Package/gershwin-sound
   SUBMENU:=GNUstep
   TITLE:=Gershwin Sound Preferences
   URL:=https://github.com/gershwin-desktop/gershwin-components
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-sound/description

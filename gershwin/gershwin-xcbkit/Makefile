@@ -22,7 +22,7 @@ define Package/gershwin-xcbkit
   SUBMENU:=GNUstep
   TITLE:=XCBKit Framework
   URL:=https://github.com/gershwin-desktop/gershwin-windowmanager
-  DEPENDS:=+gnustep-gui +libxcb +xcb-util +xcb-util-wm +xcb-util-keysyms
+  DEPENDS:=+gnustep-gui +libxcb +xcb-util +xcb-util-wm +xcb-util-keysyms @BROKEN
 endef
 
 define Package/gershwin-xcbkit/description

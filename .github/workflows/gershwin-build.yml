@@ -65,38 +65,13 @@ jobs:
           # Configure for building
           make defconfig
           
-          # Build Gershwin packages (in dependency order)
+          # Build non-BROKEN Gershwin packages
+          # Note: Most GNUstep packages require Clang's -fblocks which is not
+          # available in the GCC-based OpenWrt SDK. Only the data packages
+          # (gershwin-system, gershwin-assets) can be built with GCC.
           PACKAGES=(
             gershwin-system
             gershwin-assets
-            swift-corelibs-libdispatch
-            gnustep-make
-            libobjc2
-            gnustep-base
-            gnustep-gui
-            gnustep-back
-            gershwin-plistupdate
-            gershwin-workspace
-            gershwin-systempreferences
-            gershwin-eau-theme
-            gershwin-terminal
-            gershwin-textedit
-            gershwin-xcbkit
-            gershwin-windowmanager
-            gershwin-menu
-            gershwin-loginwindow
-            gershwin-appwrap
-            gershwin-display
-            gershwin-keyboard
-            gershwin-globalshortcuts
-            gershwin-screenshot
-            gershwin-printers
-            gershwin-network
-            gershwin-sound
-            gershwin-sharing
-            gershwin-console
-            gershwin-sudoaskpass
-            gershwin-processes
           )
           
           for pkg in "${PACKAGES[@]}"; do
@@ -108,6 +83,7 @@ jobs:
 
       - name: List built packages
         run: |
+          echo "=== Built packages ==="
           find sdk/bin -name "*.ipk" -type f | head -50
 
       - name: Upload artifacts

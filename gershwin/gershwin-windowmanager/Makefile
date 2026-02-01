@@ -22,7 +22,7 @@ define Package/gershwin-windowmanager
   SUBMENU:=GNUstep
   TITLE:=Gershwin Window Manager
   URL:=https://github.com/gershwin-desktop/gershwin-windowmanager
-  DEPENDS:=+gershwin-xcbkit +gnustep-gui +gnustep-back
+  DEPENDS:=+gershwin-xcbkit +gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-windowmanager/description

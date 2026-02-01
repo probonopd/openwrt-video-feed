@@ -21,7 +21,7 @@ define Package/gershwin-systempreferences
   SUBMENU:=GNUstep
   TITLE:=Gershwin System Preferences
   URL:=https://github.com/gershwin-desktop/gershwin-systempreferences
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-systempreferences/description

@@ -27,7 +27,7 @@ define Package/libobjc2
   SUBMENU:=GNUstep
   TITLE:=Modern Objective-C Runtime
   URL:=https://github.com/gnustep/libobjc2
-  DEPENDS:=+libstdcpp +swift-corelibs-libdispatch
+  DEPENDS:=+libstdcpp +swift-corelibs-libdispatch @BROKEN
 endef
 
 define Package/libobjc2/description

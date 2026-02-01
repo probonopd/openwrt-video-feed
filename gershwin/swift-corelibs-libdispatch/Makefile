@@ -27,12 +27,17 @@ define Package/swift-corelibs-libdispatch
   SUBMENU:=GNUstep
   TITLE:=Apple Grand Central Dispatch (libdispatch)
   URL:=https://github.com/apple/swift-corelibs-libdispatch
-  DEPENDS:=+libpthread +librt
+  DEPENDS:=+libpthread +librt @BROKEN
 endef
 
 define Package/swift-corelibs-libdispatch/description
   Grand Central Dispatch (GCD or libdispatch) provides comprehensive
   support for concurrent code execution on multicore hardware.
+  
+  Note: This package requires Clang compiler with -fblocks support.
+  Currently marked as BROKEN because the OpenWrt SDK uses GCC which
+  does not support the Objective-C Blocks extension required by
+  libdispatch.
 endef
 
 CMAKE_OPTIONS += \
@@ -43,12 +48,21 @@ CMAKE_OPTIONS += \
 	-DINSTALL_OS_HEADERS_DIR=/System/Library/Headers/os \
 	-DINSTALL_PRIVATE_HEADERS=ON \
 	-DCMAKE_INSTALL_MANDIR=Documentation/man \
-	-DCMAKE_BUILD_TYPE=Release
+	-DCMAKE_BUILD_TYPE=Release \
+	-DENABLE_TESTING=OFF \
+	-DENABLE_SWIFT=OFF
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
 	$(SED) 's/cmake_minimum_required(VERSION 3\.[0-9]\+\(\.\.\.[0-9.]\+\)\?)/cmake_minimum_required(VERSION 3.20...3.99)/g' \
 		$(PKG_BUILD_DIR)/CMakeLists.txt
+	# Remove clang-specific fmodule-map-file options that GCC doesn't support
+	$(SED) 's/-fmodule-map-file=[^ >\"]*//' $(PKG_BUILD_DIR)/CMakeLists.txt
+	# Completely disable the clang-specific warnings cmake module by commenting out its content
+	echo "# GCC compatibility - all warnings disabled for cross-compilation" > $(PKG_BUILD_DIR)/cmake/modules/DispatchCompilerWarnings.cmake
+	echo "function(dispatch_add_warnings target)" >> $(PKG_BUILD_DIR)/cmake/modules/DispatchCompilerWarnings.cmake  
+	echo "  target_compile_options(\$${target} PRIVATE -Wall -Wno-unknown-pragmas)" >> $(PKG_BUILD_DIR)/cmake/modules/DispatchCompilerWarnings.cmake
+	echo "endfunction()" >> $(PKG_BUILD_DIR)/cmake/modules/DispatchCompilerWarnings.cmake
 endef
 
 define Build/InstallDev

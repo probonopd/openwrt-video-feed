@@ -22,7 +22,7 @@ define Package/gershwin-sudoaskpass
   SUBMENU:=GNUstep
   TITLE:=Gershwin Sudo Ask Pass
   URL:=https://github.com/gershwin-desktop/gershwin-components
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-sudoaskpass/description

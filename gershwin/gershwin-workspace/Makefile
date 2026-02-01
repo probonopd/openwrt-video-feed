@@ -24,7 +24,7 @@ define Package/gershwin-workspace
   SUBMENU:=GNUstep
   TITLE:=Gershwin Workspace (File Manager)
   URL:=https://github.com/gershwin-desktop/gershwin-workspace
-  DEPENDS:=+gnustep-gui +gnustep-back
+  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
 endef
 
 define Package/gershwin-workspace/description

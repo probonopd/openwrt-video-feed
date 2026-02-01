@@ -36,13 +36,23 @@ CONFIGURE_ARGS += \
 	--disable-specs \
 	--disable-xf86bigfont \
 	--without-xmlto \
-	--without-fop
+	--without-fop \
+	--disable-loadable-i18n
+
+CONFIGURE_VARS += \
+	xorg_cv_malloc0_returns_null=no \
+	CC_FOR_BUILD="gcc" \
+	CFLAGS_FOR_BUILD="" \
+	LDFLAGS_FOR_BUILD=""
 
 define Build/Configure
 	$(call Build/Configure/Default)
 endef
 
 define Build/Compile
+	# Build makekeys with host compiler first
+	$(MAKE) -C $(PKG_BUILD_DIR)/src/util CC="gcc" CFLAGS="" LDFLAGS=""
+	# Then build the rest with cross compiler
 	$(call Build/Compile/Default)
 endef
 

@@ -16,6 +16,9 @@ PKG_LICENSE_FILES:=COPYING.LIB
 PKG_FIXUP:=autoreconf
 PKG_BUILD_PARALLEL:=1
 
+# Require host clang for cross-compilation
+PKG_BUILD_DEPENDS:=llvm/host
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/gnustep-back
@@ -24,7 +27,7 @@ define Package/gnustep-back
   SUBMENU:=GNUstep
   TITLE:=GNUstep Backend
   URL:=https://github.com/gnustep/libs-back
-  DEPENDS:=+gnustep-gui +libcairo +libX11 +libXft +libXext @BROKEN
+  DEPENDS:=+gnustep-gui +libcairo +libX11 +libXft +libXext
 endef
 
 define Package/gnustep-back/description
@@ -33,11 +36,20 @@ define Package/gnustep-back/description
   underlying graphics and windowing system.
 endef
 
+# Use host clang for cross-compilation
+CLANG_PATH:=$(STAGING_DIR_HOST)/llvm-mesa/bin
+CLANG_TARGET_TRIPLE:=$(subst muslgnueabi,musleabi,$(subst openwrt,unknown,$(REAL_GNU_TARGET_NAME)))
+
 MAKE_FLAGS += \
 	fonts=no
 
+CONFIGURE_VARS += \
+	CC="$(CLANG_PATH)/clang --target=$(CLANG_TARGET_TRIPLE) --sysroot=$(TOOLCHAIN_DIR)" \
+	CXX="$(CLANG_PATH)/clang++ --target=$(CLANG_TARGET_TRIPLE) --sysroot=$(TOOLCHAIN_DIR)" \
+	OBJC="$(CLANG_PATH)/clang --target=$(CLANG_TARGET_TRIPLE) --sysroot=$(TOOLCHAIN_DIR)"
+
 define Build/Configure
-	. /System/Library/Makefiles/GNUstep.sh 2>/dev/null || true
+	. $(STAGING_DIR)/System/Library/Makefiles/GNUstep.sh 2>/dev/null || true
 	$(call Build/Configure/Default)
 endef
 

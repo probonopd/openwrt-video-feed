@@ -16,6 +16,9 @@ PKG_LICENSE_FILES:=COPYING
 PKG_FIXUP:=autoreconf
 PKG_BUILD_PARALLEL:=1
 
+# Require host clang for cross-compilation
+PKG_BUILD_DEPENDS:=llvm/host
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/gnustep-make
@@ -24,7 +27,7 @@ define Package/gnustep-make
   SUBMENU:=GNUstep
   TITLE:=GNUstep Make
   URL:=https://github.com/gnustep/tools-make
-  DEPENDS:=+swift-corelibs-libdispatch @BROKEN
+  DEPENDS:=+swift-corelibs-libdispatch
 endef
 
 define Package/gnustep-make/description
@@ -33,6 +36,9 @@ define Package/gnustep-make/description
   using the GNUstep framework.
 endef
 
+# Use host clang for cross-compilation
+CLANG_PATH:=$(STAGING_DIR_HOST)/llvm-mesa/bin
+
 CONFIGURE_ARGS += \
 	--enable-importing-config-file \
 	--with-config-file=/System/Library/Preferences/GNUstep.conf \
@@ -40,8 +46,10 @@ CONFIGURE_ARGS += \
 	--with-objc-lib-flag=" "
 
 CONFIGURE_VARS += \
-	LDFLAGS="-L/System/Library/Libraries" \
-	CPPFLAGS="-I/System/Library/Headers" \
+	CC="$(CLANG_PATH)/clang" \
+	CXX="$(CLANG_PATH)/clang++" \
+	LDFLAGS="-L$(STAGING_DIR)/System/Library/Libraries" \
+	CPPFLAGS="-I$(STAGING_DIR)/System/Library/Headers" \
 	libobjc_LIBS=" "
 
 define Build/InstallDev

@@ -13,7 +13,14 @@ PKG_MAINTAINER:=
 PKG_LICENSE:=GPL-2.0-or-later
 PKG_LICENSE_FILES:=COPYING
 
+# Require host clang for cross-compilation
+PKG_BUILD_DEPENDS:=llvm/host
+
 include $(INCLUDE_DIR)/package.mk
+
+# Use host clang for cross-compilation
+CLANG_PATH:=$(STAGING_DIR_HOST)/llvm-mesa/bin
+CLANG_TARGET_TRIPLE:=$(subst muslgnueabi,musleabi,$(subst openwrt,unknown,$(REAL_GNU_TARGET_NAME)))
 
 define Package/gershwin-eau-theme
   SECTION:=utils
@@ -21,7 +28,7 @@ define Package/gershwin-eau-theme
   SUBMENU:=GNUstep
   TITLE:=Gershwin Eau Theme
   URL:=https://github.com/gershwin-desktop/gershwin-eau-theme
-  DEPENDS:=+gnustep-gui @BROKEN
+  DEPENDS:=+gnustep-gui
 endef
 
 define Package/gershwin-eau-theme/description
@@ -30,8 +37,10 @@ define Package/gershwin-eau-theme/description
 endef
 
 define Build/Compile
-	. /System/Library/Makefiles/GNUstep.sh 2>/dev/null || true && \
-	$(MAKE) -C $(PKG_BUILD_DIR)
+	. $(STAGING_DIR)/System/Library/Makefiles/GNUstep.sh 2>/dev/null || true && \
+	$(MAKE) -C $(PKG_BUILD_DIR) \
+		CC="$(CLANG_PATH)/clang --target=$(CLANG_TARGET_TRIPLE) --sysroot=$(TOOLCHAIN_DIR)" \
+		OBJC="$(CLANG_PATH)/clang --target=$(CLANG_TARGET_TRIPLE) --sysroot=$(TOOLCHAIN_DIR)"
 endef
 
 define Package/gershwin-eau-theme/install

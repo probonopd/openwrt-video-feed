@@ -16,6 +16,9 @@ PKG_LICENSE_FILES:=COPYING
 PKG_FIXUP:=autoreconf
 PKG_BUILD_PARALLEL:=1
 
+# Require host clang for cross-compilation
+PKG_BUILD_DEPENDS:=llvm/host
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/gershwin-workspace
@@ -24,7 +27,7 @@ define Package/gershwin-workspace
   SUBMENU:=GNUstep
   TITLE:=Gershwin Workspace (File Manager)
   URL:=https://github.com/gershwin-desktop/gershwin-workspace
-  DEPENDS:=+gnustep-gui +gnustep-back @BROKEN
+  DEPENDS:=+gnustep-gui +gnustep-back
 endef
 
 define Package/gershwin-workspace/description
@@ -32,14 +35,20 @@ define Package/gershwin-workspace/description
   It provides a graphical interface for browsing and managing files.
 endef
 
+# Use host clang for cross-compilation
+CLANG_PATH:=$(STAGING_DIR_HOST)/llvm-mesa/bin
+CLANG_TARGET_TRIPLE:=$(subst muslgnueabi,musleabi,$(subst openwrt,unknown,$(REAL_GNU_TARGET_NAME)))
+
 define Build/Configure
 	cd $(PKG_BUILD_DIR) && autoreconf -fi
 	$(call Build/Configure/Default)
 endef
 
 define Build/Compile
-	. /System/Library/Makefiles/GNUstep.sh 2>/dev/null || true && \
-	$(MAKE) -C $(PKG_BUILD_DIR)
+	. $(STAGING_DIR)/System/Library/Makefiles/GNUstep.sh 2>/dev/null || true && \
+	$(MAKE) -C $(PKG_BUILD_DIR) \
+		CC="$(CLANG_PATH)/clang --target=$(CLANG_TARGET_TRIPLE) --sysroot=$(TOOLCHAIN_DIR)" \
+		OBJC="$(CLANG_PATH)/clang --target=$(CLANG_TARGET_TRIPLE) --sysroot=$(TOOLCHAIN_DIR)"
 endef
 
 define Package/gershwin-workspace/install

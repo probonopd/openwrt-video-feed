@@ -13,7 +13,8 @@ PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 
-PKG_BUILD_DEPENDS:=cmake/host gnustep-make swift-corelibs-libdispatch
+# Require host clang for cross-compilation with Objective-C support
+PKG_BUILD_DEPENDS:=cmake/host llvm/host gnustep-make swift-corelibs-libdispatch
 
 CMAKE_BINARY_SUBDIR:=Build
 CMAKE_INSTALL:=1
@@ -27,7 +28,7 @@ define Package/libobjc2
   SUBMENU:=GNUstep
   TITLE:=Modern Objective-C Runtime
   URL:=https://github.com/gnustep/libobjc2
-  DEPENDS:=+libstdcpp +swift-corelibs-libdispatch @BROKEN
+  DEPENDS:=+libstdcpp +swift-corelibs-libdispatch
 endef
 
 define Package/libobjc2/description
@@ -36,12 +37,25 @@ define Package/libobjc2/description
   instance variables.
 endef
 
+# Use host clang for cross-compilation (required for Objective-C support)
+CLANG_PATH:=$(STAGING_DIR_HOST)/llvm-mesa/bin
+TARGET_CC:=$(CLANG_PATH)/clang
+TARGET_CXX:=$(CLANG_PATH)/clang++
+
+# Get the target triple from OpenWrt
+CLANG_TARGET_TRIPLE:=$(subst muslgnueabi,musleabi,$(subst openwrt,unknown,$(REAL_GNU_TARGET_NAME)))
+
 CMAKE_OPTIONS += \
+	-DCMAKE_C_COMPILER=$(TARGET_CC) \
+	-DCMAKE_CXX_COMPILER=$(TARGET_CXX) \
+	-DCMAKE_C_COMPILER_TARGET=$(CLANG_TARGET_TRIPLE) \
+	-DCMAKE_CXX_COMPILER_TARGET=$(CLANG_TARGET_TRIPLE) \
+	-DCMAKE_SYSROOT=$(TOOLCHAIN_DIR) \
 	-DGNUSTEP_INSTALL_TYPE=SYSTEM \
 	-DCMAKE_BUILD_TYPE=Release \
 	-DEMBEDDED_BLOCKS_RUNTIME=OFF \
-	-DBlocksRuntime_INCLUDE_DIR=/System/Library/Headers \
-	-DBlocksRuntime_LIBRARIES=/System/Library/Libraries/libBlocksRuntime.so
+	-DBlocksRuntime_INCLUDE_DIR=$(STAGING_DIR)/System/Library/Headers \
+	-DBlocksRuntime_LIBRARIES=$(STAGING_DIR)/System/Library/Libraries/libBlocksRuntime.so
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/System/Library/Headers/objc

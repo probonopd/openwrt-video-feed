@@ -13,7 +13,8 @@ PKG_MAINTAINER:=
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
-PKG_BUILD_DEPENDS:=cmake/host
+# Require host clang for cross-compilation with -fblocks support
+PKG_BUILD_DEPENDS:=cmake/host llvm/host
 
 CMAKE_BINARY_SUBDIR:=Build
 CMAKE_INSTALL:=1
@@ -27,20 +28,28 @@ define Package/swift-corelibs-libdispatch
   SUBMENU:=GNUstep
   TITLE:=Apple Grand Central Dispatch (libdispatch)
   URL:=https://github.com/apple/swift-corelibs-libdispatch
-  DEPENDS:=+libpthread +librt @BROKEN
+  DEPENDS:=+libpthread +librt +libstdcpp
 endef
 
 define Package/swift-corelibs-libdispatch/description
   Grand Central Dispatch (GCD or libdispatch) provides comprehensive
   support for concurrent code execution on multicore hardware.
-  
-  Note: This package requires Clang compiler with -fblocks support.
-  Currently marked as BROKEN because the OpenWrt SDK uses GCC which
-  does not support the Objective-C Blocks extension required by
-  libdispatch.
 endef
 
+# Use host clang for cross-compilation (required for -fblocks support)
+CLANG_PATH:=$(STAGING_DIR_HOST)/llvm-mesa/bin
+TARGET_CC:=$(CLANG_PATH)/clang
+TARGET_CXX:=$(CLANG_PATH)/clang++
+
+# Get the target triple from OpenWrt
+CLANG_TARGET_TRIPLE:=$(subst muslgnueabi,musleabi,$(subst openwrt,unknown,$(REAL_GNU_TARGET_NAME)))
+
 CMAKE_OPTIONS += \
+	-DCMAKE_C_COMPILER=$(TARGET_CC) \
+	-DCMAKE_CXX_COMPILER=$(TARGET_CXX) \
+	-DCMAKE_C_COMPILER_TARGET=$(CLANG_TARGET_TRIPLE) \
+	-DCMAKE_CXX_COMPILER_TARGET=$(CLANG_TARGET_TRIPLE) \
+	-DCMAKE_SYSROOT=$(TOOLCHAIN_DIR) \
 	-DCMAKE_INSTALL_PREFIX=/System/Library \
 	-DCMAKE_INSTALL_LIBDIR=Libraries \
 	-DINSTALL_DISPATCH_HEADERS_DIR=/System/Library/Headers/dispatch \
@@ -56,13 +65,6 @@ define Build/Prepare
 	$(call Build/Prepare/Default)
 	$(SED) 's/cmake_minimum_required(VERSION 3\.[0-9]\+\(\.\.\.[0-9.]\+\)\?)/cmake_minimum_required(VERSION 3.20...3.99)/g' \
 		$(PKG_BUILD_DIR)/CMakeLists.txt
-	# Remove clang-specific fmodule-map-file options that GCC doesn't support
-	$(SED) 's/-fmodule-map-file=[^ >\"]*//' $(PKG_BUILD_DIR)/CMakeLists.txt
-	# Completely disable the clang-specific warnings cmake module by commenting out its content
-	echo "# GCC compatibility - all warnings disabled for cross-compilation" > $(PKG_BUILD_DIR)/cmake/modules/DispatchCompilerWarnings.cmake
-	echo "function(dispatch_add_warnings target)" >> $(PKG_BUILD_DIR)/cmake/modules/DispatchCompilerWarnings.cmake  
-	echo "  target_compile_options(\$${target} PRIVATE -Wall -Wno-unknown-pragmas)" >> $(PKG_BUILD_DIR)/cmake/modules/DispatchCompilerWarnings.cmake
-	echo "endfunction()" >> $(PKG_BUILD_DIR)/cmake/modules/DispatchCompilerWarnings.cmake
 endef
 
 define Build/InstallDev

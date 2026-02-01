@@ -16,6 +16,9 @@ PKG_LICENSE_FILES:=COPYING.LIB
 PKG_FIXUP:=autoreconf
 PKG_BUILD_PARALLEL:=1
 
+# Require host clang for cross-compilation
+PKG_BUILD_DEPENDS:=llvm/host
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/gnustep-base
@@ -25,7 +28,7 @@ define Package/gnustep-base
   TITLE:=GNUstep Base Library
   URL:=https://github.com/gnustep/libs-base
   DEPENDS:=+libobjc2 +gnustep-make +swift-corelibs-libdispatch +libxml2 +libxslt \
-           +gnutls +libffi +libicu +zlib @BROKEN
+           +gnutls +libffi +libicu +zlib
 endef
 
 define Package/gnustep-base/description
@@ -34,12 +37,21 @@ define Package/gnustep-base/description
   networking, and more.
 endef
 
+# Use host clang for cross-compilation
+CLANG_PATH:=$(STAGING_DIR_HOST)/llvm-mesa/bin
+CLANG_TARGET_TRIPLE:=$(subst muslgnueabi,musleabi,$(subst openwrt,unknown,$(REAL_GNU_TARGET_NAME)))
+
 CONFIGURE_ARGS += \
-	--with-dispatch-include=/System/Library/Headers \
-	--with-dispatch-library=/System/Library/Libraries
+	--with-dispatch-include=$(STAGING_DIR)/System/Library/Headers \
+	--with-dispatch-library=$(STAGING_DIR)/System/Library/Libraries
+
+CONFIGURE_VARS += \
+	CC="$(CLANG_PATH)/clang --target=$(CLANG_TARGET_TRIPLE) --sysroot=$(TOOLCHAIN_DIR)" \
+	CXX="$(CLANG_PATH)/clang++ --target=$(CLANG_TARGET_TRIPLE) --sysroot=$(TOOLCHAIN_DIR)" \
+	OBJC="$(CLANG_PATH)/clang --target=$(CLANG_TARGET_TRIPLE) --sysroot=$(TOOLCHAIN_DIR)"
 
 define Build/Configure
-	. /System/Library/Makefiles/GNUstep.sh 2>/dev/null || true
+	. $(STAGING_DIR)/System/Library/Makefiles/GNUstep.sh 2>/dev/null || true
 	$(call Build/Configure/Default)
 endef
 

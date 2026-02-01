@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=xlibre
-PKG_VERSION:=25.1.0
+PKG_VERSION:=25.1.1
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/X11Libre/xserver.git
-PKG_SOURCE_VERSION:=xlibre-$(PKG_VERSION)
+PKG_SOURCE_VERSION:=xlibre-xserver-$(PKG_VERSION)
 PKG_MIRROR_HASH:=skip
 
 PKG_MAINTAINER:=

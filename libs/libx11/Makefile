@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=libX11-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
-PKG_HASH:=b7a1a90d881bb7b94df5cf31509e6b03f15c0972d3ac25ab0441f5fbc789650f
+PKG_HASH:=2b3b3dad9347db41dca56beb7db5878f283bde1142f04d9f8e478af435dfdc53
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=MIT

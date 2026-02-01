@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=libXdmcp-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
-PKG_HASH:=31a7abc4f129dcf6f27ae912c3eedcb94d25ad2e8f317f69df6eda0bc4e4f2f3
+PKG_HASH:=d8a5222828c3adab70adf69a5583f1d32eb5ece04304f7f8392b6a353aa2228c
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=MIT

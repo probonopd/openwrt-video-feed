@@ -34,6 +34,13 @@ CONFIGURE_ARGS += \
 	--disable-devel-docs \
 	--without-doxygen
 
+CONFIGURE_VARS += \
+	XCBPROTO_XCBINCLUDEDIR=$(STAGING_DIR)/usr/share/xcb \
+	XCBPROTO_XCBPYTHONDIR=$(STAGING_DIR)/usr/lib/python3/site-packages
+
+MAKE_VARS += \
+	PYTHONPATH=$(STAGING_DIR)/usr/lib/python3/site-packages
+
 define Build/Configure
 	$(call Build/Configure/Default)
 endef

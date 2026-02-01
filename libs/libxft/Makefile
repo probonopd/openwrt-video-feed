@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=libXft-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
-PKG_HASH:=32e48fe2d844422e64809e4e99b9d8aed26c1b541a5acf837c5037b8d9f278a8
+PKG_HASH:=5e8c3c4bc2d4c0a40aef6b4b38ed2fb74301640da29f6528154b5009b1c6dd49
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=MIT

@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://invisible-mirror.net/archives/xterm/
-PKG_HASH:=97c24ea9b8a8dc474df04ae3e57dee5eca4a2bc00ffebb6c9ee8c48c25f25cbf
+PKG_HASH:=2e9b742b9cba44ecec58074e513237f6cd6d5923f1737cb36a4e5625f4ae8662
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=MIT

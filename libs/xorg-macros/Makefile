@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=util-macros-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/util/
-PKG_HASH:=0b308f62dce78ac0f4d9de6888234bf168b0ca1d3d3ae11a87852a49e2e009eb
+PKG_HASH:=0b308f62dce78ac0f4d9de6888234bf170f276b64ac7c96e99779bb4319bcef5
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=MIT

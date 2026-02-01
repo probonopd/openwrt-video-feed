@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/proto/
-PKG_HASH:=392d3c9690bddd9cebc5139281c222af87887982ed566c839e5fa4aeffaf10f0
+PKG_HASH:=2c1bacd2110f4799f74de6ebb714b94cf6f80fb112316b1219480fd22562148c
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
@@ -40,10 +40,16 @@ endef
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/share/xcb
 	$(CP) $(PKG_INSTALL_DIR)/usr/share/xcb/*.xml $(1)/usr/share/xcb/
+	$(INSTALL_DIR) $(1)/usr/share/pkgconfig
+	$(SED) 's|$$$${pc_sysrootdir}||g' $(PKG_INSTALL_DIR)/usr/share/pkgconfig/xcb-proto.pc
+	$(SED) 's|datadir=/usr/share|datadir=$(STAGING_DIR)/usr/share|g' $(PKG_INSTALL_DIR)/usr/share/pkgconfig/xcb-proto.pc
+	$(SED) 's|PYTHON_PREFIX=/usr|PYTHON_PREFIX=$(STAGING_DIR)/usr|g' $(PKG_INSTALL_DIR)/usr/share/pkgconfig/xcb-proto.pc
+	$(SED) 's|pythondir=.*|pythondir=$(STAGING_DIR)/usr/lib/python3/site-packages|g' $(PKG_INSTALL_DIR)/usr/share/pkgconfig/xcb-proto.pc
+	$(CP) $(PKG_INSTALL_DIR)/usr/share/pkgconfig/*.pc $(1)/usr/share/pkgconfig/
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/*.pc $(1)/usr/lib/pkgconfig/
-	$(INSTALL_DIR) $(1)/usr/lib/python*/site-packages/xcbgen 2>/dev/null || true
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/python*/site-packages/xcbgen $(1)/usr/lib/ 2>/dev/null || true
+	$(CP) $(PKG_INSTALL_DIR)/usr/share/pkgconfig/*.pc $(1)/usr/lib/pkgconfig/
+	$(INSTALL_DIR) $(1)/usr/lib/python3/site-packages
+	$(CP) $(PKG_INSTALL_DIR)/usr/local/lib/python*/dist-packages/xcbgen $(1)/usr/lib/python3/site-packages/ 2>/dev/null || true
 endef
 
 $(eval $(call BuildPackage,xcb-proto))

@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=libXmu-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
-PKG_HASH:=skip
+PKG_HASH:=fcb27793248a39e5fcc5b9c4aec40cc0734b3ca76aac3d7d1c264e7f7e14e8b2
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=MIT

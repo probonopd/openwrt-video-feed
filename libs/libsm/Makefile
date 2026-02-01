@@ -6,7 +6,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=libSM-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
-PKG_HASH:=14d69f6be61d41308d1c7b52a38aed13a66e7c7e7fc4e9dec6ad7903e7a2470e
+PKG_HASH:=2af9e12da5ef670dc3a7bce1895c9c0f1bfb0cb9e64e8db40fcc33f883bd20bc
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=MIT

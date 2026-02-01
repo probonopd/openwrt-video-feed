@@ -42,7 +42,6 @@ endef
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/X11/Xtrans
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/X11/Xtrans/*.h $(1)/usr/include/X11/Xtrans/
-	$(INSTALL_DIR) $(1)/usr/include/X11/Xtrans/*.c $(1)/usr/include/X11/Xtrans/ 2>/dev/null || true
 	$(INSTALL_DIR) $(1)/usr/share/aclocal
 	$(CP) $(PKG_INSTALL_DIR)/usr/share/aclocal/*.m4 $(1)/usr/share/aclocal/
 	$(INSTALL_DIR) $(1)/usr/share/pkgconfig

@@ -24,7 +24,7 @@ define Package/xf86-input-evdev
   SUBMENU:=Video
   TITLE:=X.Org evdev input driver
   URL:=https://xorg.freedesktop.org/
-  DEPENDS:=+xlibre +libevdev +libudev +libmtdev
+  DEPENDS:=+xlibre +libevdev +libudev-zero +libmtdev
 endef
 
 define Package/xf86-input-evdev/description

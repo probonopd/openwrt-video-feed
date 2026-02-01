@@ -17,7 +17,6 @@ PKG_INSTALL:=1
 PKG_BUILD_DEPENDS:=xlibre xorgproto
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/meson.mk
 
 define Package/xf86-input-libinput
   SECTION:=libs
@@ -32,8 +31,16 @@ define Package/xf86-input-libinput/description
   Generic Linux input driver for X.Org using libinput.
 endef
 
-MESON_ARGS += \
-	-Dxorg-module-dir=/usr/lib/xorg/modules
+CONFIGURE_ARGS += \
+	--with-xorg-module-dir=/usr/lib/xorg/modules
+
+define Build/Configure
+	$(call Build/Configure/Default)
+endef
+
+define Build/Compile
+	$(call Build/Compile/Default)
+endef
 
 define Package/xf86-input-libinput/install
 	$(INSTALL_DIR) $(1)/usr/lib/xorg/modules/input

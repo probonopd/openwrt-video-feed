@@ -32,6 +32,9 @@ define Package/libxi/description
   X11 Input extension library.
 endef
 
+CONFIGURE_VARS += \
+	xorg_cv_malloc0_returns_null=no
+
 CONFIGURE_ARGS += \
 	--without-xmlto \
 	--without-fop \

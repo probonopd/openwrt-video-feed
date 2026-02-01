@@ -45,6 +45,9 @@ define Package/libxmuu/description
   Lite X.Org miscellaneous utility library.
 endef
 
+CONFIGURE_VARS += \
+	xorg_cv_malloc0_returns_null=no
+
 CONFIGURE_ARGS += \
 	--without-xmlto \
 	--without-fop
@@ -58,10 +61,8 @@ define Build/Compile
 endef
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/include/X11
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/X11/*.h $(1)/usr/include/X11/
 	$(INSTALL_DIR) $(1)/usr/include/X11/Xmu
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/X11/Xmu/*.h $(1)/usr/include/X11/Xmu/ 2>/dev/null || true
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/X11/Xmu/*.h $(1)/usr/include/X11/Xmu/
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lib*.so* $(1)/usr/lib/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lib*.a $(1)/usr/lib/ 2>/dev/null || true

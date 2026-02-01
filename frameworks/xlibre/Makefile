@@ -26,9 +26,9 @@ define Package/xlibre
   SUBMENU:=Frameworks and Toolkits
   TITLE:=XLibre X server
   URL:=https://github.com/X11Libre/xserver
-  DEPENDS:=+libdrm +libpciaccess +libseat +libx11 +libxau \
+  DEPENDS:=+libdrm +libpciaccess +libx11 +libxau \
 	+libxcb +libxcvt +libxdmcp +libxext +libxfixes +libxfont2 +libxkbfile \
-	+libxshmfence +pixman +seatd +libsha1
+	+libxshmfence +pixman +libnettle
 endef
 
 define Package/xlibre/description
@@ -57,7 +57,7 @@ MESON_ARGS += \
 	-Dhal=false \
 	-Dsystemd_logind=false \
 	-Dsystemd_notify=false \
-	-Dseatd_libseat=true \
+	-Dseatd_libseat=false \
 	-Dxdmcp=true \
 	-Dxdm-auth-1=true \
 	-Dipv6=auto \
@@ -69,7 +69,7 @@ MESON_ARGS += \
 	-Dxvmc=false \
 	-Ddga=false \
 	-Dxf86bigfont=false \
-	-Dsha1=libsha1 \
+	-Dsha1=libnettle \
 	-Ddefault_font_path=/usr/share/fonts/X11/misc,/usr/share/fonts/X11/TTF,/usr/share/fonts/X11/OTF,/usr/share/fonts/X11/Type1,/usr/share/fonts/X11/100dpi,/usr/share/fonts/X11/75dpi \
 	-Dxkb_dir=/usr/share/X11/xkb \
 	-Dxkb_output_dir=/tmp/xkb \

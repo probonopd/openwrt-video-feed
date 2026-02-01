@@ -32,6 +32,9 @@ define Package/libxrandr/description
   X Resize, Rotate and Reflect Extension library.
 endef
 
+CONFIGURE_VARS += \
+	xorg_cv_malloc0_returns_null=no
+
 define Build/Configure
 	$(call Build/Configure/Default)
 endef

@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=libxfont2
-PKG_VERSION:=2.0.7
+PKG_NAME:=libfontenc
+PKG_VERSION:=1.1.8
 PKG_RELEASE:=1
 
-PKG_SOURCE:=libXfont2-$(PKG_VERSION).tar.xz
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
-PKG_HASH:=8b7b82fdeba48769b69433e8e3fbb984a5f6bf368b0d5f47abeec49de3e58efb
+PKG_HASH:=7b02c3d405236e0d86806b1de9d6868fe60c313628b38350b032914aa4fd14c6
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
@@ -14,28 +14,25 @@ PKG_LICENSE_FILES:=COPYING
 
 PKG_INSTALL:=1
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/libXfont2-$(PKG_VERSION)
-PKG_BUILD_DEPENDS:=xorgproto libxtrans libfontenc
+PKG_BUILD_DEPENDS:=xorgproto xorg-macros
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/libxfont2
+define Package/libfontenc
   SECTION:=libs
   CATEGORY:=Libraries
   SUBMENU:=Video
-  TITLE:=X font handling library
+  TITLE:=X font encoding library
   URL:=https://xorg.freedesktop.org/
-  DEPENDS:=+libfreetype +zlib +libbz2 +libfontenc
+  DEPENDS:=+zlib
 endef
 
-define Package/libxfont2/description
-  X.Org library providing font handling for X servers.
+define Package/libfontenc/description
+  X.Org font encoding library for handling font character set encodings.
 endef
 
 CONFIGURE_ARGS += \
-	--disable-devel-docs \
-	--without-xmlto \
-	--without-fop
+	--with-fontrootdir=/usr/share/fonts/X11
 
 define Build/Configure
 	$(call Build/Configure/Default)
@@ -55,9 +52,9 @@ define Build/InstallDev
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/*.pc $(1)/usr/lib/pkgconfig/
 endef
 
-define Package/libxfont2/install
+define Package/libfontenc/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lib*.so.* $(1)/usr/lib/
 endef
 
-$(eval $(call BuildPackage,libxfont2))
+$(eval $(call BuildPackage,libfontenc))

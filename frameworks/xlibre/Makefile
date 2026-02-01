@@ -26,7 +26,7 @@ define Package/xlibre
   SUBMENU:=Frameworks and Toolkits
   TITLE:=XLibre X server
   URL:=https://github.com/X11Libre/xserver
-  DEPENDS:=+libdrm +libepoxy +libmesa +libpciaccess +libseat +libx11 +libxau \
+  DEPENDS:=+libdrm +libepoxy +mesa3d +libpciaccess +libseat +libx11 +libxau \
 	+libxcb +libxcvt +libxdmcp +libxext +libxfixes +libxfont2 +libxkbfile \
 	+libxshmfence +pixman +seatd +xkeyboard-config
 endef

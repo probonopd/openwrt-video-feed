@@ -26,9 +26,9 @@ define Package/xlibre
   SUBMENU:=Frameworks and Toolkits
   TITLE:=XLibre X server
   URL:=https://github.com/X11Libre/xserver
-  DEPENDS:=+libdrm +libepoxy +mesa3d +libpciaccess +libseat +libx11 +libxau \
+  DEPENDS:=+libdrm +libpciaccess +libseat +libx11 +libxau \
 	+libxcb +libxcvt +libxdmcp +libxext +libxfixes +libxfont2 +libxkbfile \
-	+libxshmfence +pixman +seatd +xkeyboard-config
+	+libxshmfence +pixman +seatd +libsha1
 endef
 
 define Package/xlibre/description
@@ -46,15 +46,14 @@ MESON_ARGS += \
 	-Dxvfb=false \
 	-Dxwin=false \
 	-Dxquartz=false \
-	-Dglamor=true \
-	-Dglx=true \
-	-Dglx_dri=true \
+	-Dglamor=false \
+	-Dglx=false \
 	-Ddri1=false \
-	-Ddri2=true \
-	-Ddri3=true \
+	-Ddri2=false \
+	-Ddri3=false \
 	-Ddrm=true \
-	-Dudev=true \
-	-Dudev_kms=true \
+	-Dudev=false \
+	-Dudev_kms=false \
 	-Dhal=false \
 	-Dsystemd_logind=false \
 	-Dsystemd_notify=false \
@@ -69,8 +68,8 @@ MESON_ARGS += \
 	-Dxv=true \
 	-Dxvmc=false \
 	-Ddga=false \
-	-Dsecure-rpc=false \
 	-Dxf86bigfont=false \
+	-Dsha1=libsha1 \
 	-Ddefault_font_path=/usr/share/fonts/X11/misc,/usr/share/fonts/X11/TTF,/usr/share/fonts/X11/OTF,/usr/share/fonts/X11/Type1,/usr/share/fonts/X11/100dpi,/usr/share/fonts/X11/75dpi \
 	-Dxkb_dir=/usr/share/X11/xkb \
 	-Dxkb_output_dir=/tmp/xkb \

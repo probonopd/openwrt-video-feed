@@ -8,7 +8,7 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tgz
 PKG_SOURCE_URL:=https://invisible-mirror.net/archives/xterm/
 PKG_HASH:=97c24ea9b8a8dc474df04ae3e57dee5eca4a2bc00ffebb6c9ee8c48c25f25cbf
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 

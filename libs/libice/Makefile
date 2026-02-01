@@ -8,7 +8,7 @@ PKG_SOURCE:=libICE-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
 PKG_HASH:=974f71e6c23b02e2b66a753860ee5bb1e0ae2d1cc66ee3338b6c5bb80e96c8f7
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 

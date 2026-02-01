@@ -8,7 +8,7 @@ PKG_SOURCE:=libXaw-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
 PKG_HASH:=731d572b54c708f81e197a6afa8016918e2e06dfd3025e066ca642a5b8c39c8f
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 

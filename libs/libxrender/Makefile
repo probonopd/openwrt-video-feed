@@ -8,7 +8,7 @@ PKG_SOURCE:=libXrender-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
 PKG_HASH:=b832c9e90803e2e28c37dbb2f5b7c81d4238e354e4b92e946dd8e81c81648c5b
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 

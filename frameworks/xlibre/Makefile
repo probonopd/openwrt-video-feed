@@ -9,7 +9,7 @@ PKG_SOURCE_URL:=https://github.com/X11Libre/xserver.git
 PKG_SOURCE_VERSION:=xlibre-$(PKG_VERSION)
 PKG_MIRROR_HASH:=skip
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 

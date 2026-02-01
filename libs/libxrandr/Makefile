@@ -8,7 +8,7 @@ PKG_SOURCE:=libXrandr-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
 PKG_HASH:=1ad5b065375f4a85915aa60611cc6407c060492a214d7f9c0d0ab30ad3b48e16
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 

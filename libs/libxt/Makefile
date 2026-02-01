@@ -8,7 +8,7 @@ PKG_SOURCE:=libXt-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
 PKG_HASH:=e0a774b33324f4d4c05b199ea47b126447a248626a5ebb3a374897dd5e874935
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 

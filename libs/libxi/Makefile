@@ -8,7 +8,7 @@ PKG_SOURCE:=libXi-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
 PKG_HASH:=d0e0555e53d6e2114eabfa44226ba162d2708501a25e18d099c9168035153be3
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 

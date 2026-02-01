@@ -8,7 +8,7 @@ PKG_SOURCE:=libSM-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
 PKG_HASH:=14d69f6be61d41308d1c7b52a38aed13a66e7c7e7fc4e9dec6ad7903e7a2470e
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 

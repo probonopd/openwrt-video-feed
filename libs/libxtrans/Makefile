@@ -8,7 +8,7 @@ PKG_SOURCE:=xtrans-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
 PKG_HASH:=4054f4ae20688c37865b53bb1afd8f1ab5a73b52b47a8d54a88037ca5ce611cb
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 

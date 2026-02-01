@@ -8,7 +8,7 @@ PKG_SOURCE:=libXfixes-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://xorg.freedesktop.org/archive/individual/lib/
 PKG_HASH:=b695f93cd2499421ab02d22744458e650ccc88c1d4be5838f7997c7faf8793d6
 
-PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
+PKG_MAINTAINER:=
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 

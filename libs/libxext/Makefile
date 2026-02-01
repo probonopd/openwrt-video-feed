@@ -36,6 +36,9 @@ CONFIGURE_ARGS += \
 	--without-xmlto \
 	--without-fop
 
+CONFIGURE_VARS += \
+	xorg_cv_malloc0_returns_null=no
+
 define Build/Configure
 	$(call Build/Configure/Default)
 endef

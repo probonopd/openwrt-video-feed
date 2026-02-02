@@ -80,8 +80,31 @@ jobs:
           # Add our custom X11 feed instead of the full video feed
           echo "src-link x11 $GITHUB_WORKSPACE/x11-feed" >> feeds.conf.default
           
-          # Update and install feeds
-          ./scripts/feeds update -a
+          # Configure git for better network reliability
+          git config --global http.postBuffer 524288000
+          git config --global http.lowSpeedLimit 1000
+          git config --global http.lowSpeedTime 60
+          
+          # Update feeds with retry logic
+          max_attempts=3
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "Attempt $attempt of $max_attempts to update feeds..."
+            if ./scripts/feeds update -a; then
+              echo "Feeds updated successfully"
+              break
+            else
+              if [ $attempt -lt $max_attempts ]; then
+                echo "Feed update failed, retrying in 10 seconds..."
+                sleep 10
+                attempt=$((attempt + 1))
+              else
+                echo "Feed update failed after $max_attempts attempts"
+                exit 1
+              fi
+            fi
+          done
+          
           ./scripts/feeds install -a -p x11
 
       - name: Build X11 core libraries

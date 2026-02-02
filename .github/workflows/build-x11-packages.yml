@@ -49,63 +49,11 @@ jobs:
       - name: Configure feeds
         run: |
           cd sdk
-          # Create a custom feed that only includes our X11 packages (avoiding broken ones)
-          mkdir -p $GITHUB_WORKSPACE/x11-feed/libs
-          mkdir -p $GITHUB_WORKSPACE/x11-feed/frameworks
-          mkdir -p $GITHUB_WORKSPACE/x11-feed/utils
-          
-          # Copy only the X11 packages we created
-          for pkg in xorgproto xorg-macros libxtrans xcb-proto libxau libxdmcp libxcb \
-            libx11 libxext libxfixes libxrender libxrandr libxi libxinerama libxshmfence \
-            libice libsm libxt libxmu libxpm libxaw libxfont2 libxkbfile libxft \
-            libpciaccess libxcvt nettle libmtdev pixman libdrm libfontenc zlib libpng \
-            freetype libbz2 xf86-input-evdev xf86-input-libinput libevdev; do
-            if [ -d "$GITHUB_WORKSPACE/video/libs/$pkg" ]; then
-              cp -r "$GITHUB_WORKSPACE/video/libs/$pkg" "$GITHUB_WORKSPACE/x11-feed/libs/"
-            fi
-          done
-          
-          # Copy frameworks
-          if [ -d "$GITHUB_WORKSPACE/video/frameworks/xlibre" ]; then
-            cp -r "$GITHUB_WORKSPACE/video/frameworks/xlibre" "$GITHUB_WORKSPACE/x11-feed/frameworks/"
-          fi
-          
-          # Copy utils
-          for pkg in xkbcomp xauth xinit xrandr xterm; do
-            if [ -d "$GITHUB_WORKSPACE/video/utils/$pkg" ]; then
-              cp -r "$GITHUB_WORKSPACE/video/utils/$pkg" "$GITHUB_WORKSPACE/x11-feed/utils/"
-            fi
-          done
-          
-          # Add our custom X11 feed instead of the full video feed
-          echo "src-link x11 $GITHUB_WORKSPACE/x11-feed" >> feeds.conf.default
-          
-          # Configure git for better network reliability
-          git config --global http.postBuffer 524288000
-          git config --global http.lowSpeedLimit 1000
-          git config --global http.lowSpeedTime 60
-          
-          # Update feeds with retry logic
-          max_attempts=3
-          attempt=1
-          while [ $attempt -le $max_attempts ]; do
-            echo "Attempt $attempt of $max_attempts to update feeds..."
-            if ./scripts/feeds update -a; then
-              echo "Feeds updated successfully"
-              break
-            else
-              if [ $attempt -lt $max_attempts ]; then
-                echo "Feed update failed, retrying in 10 seconds..."
-                sleep 10
-                attempt=$((attempt + 1))
-              else
-                echo "Feed update failed after $max_attempts attempts"
-                exit 1
-              fi
-            fi
-          done
-          
-          ./scripts/feeds install -a -p x11
+          # Add the video feed (our local checkout)
+          echo "src-link video $GITHUB_WORKSPACE/video" >> feeds.conf.default
+          # Update and install feeds
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a -p video
 
       - name: Build X11 core libraries
         run: |

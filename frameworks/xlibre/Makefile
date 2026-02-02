@@ -28,7 +28,7 @@ define Package/xlibre
   URL:=https://github.com/X11Libre/xserver
   DEPENDS:=+libdrm +libpciaccess +libx11 +libxau \
 	+libxcb +libxcvt +libxdmcp +libxext +libxfixes +libxfont2 +libxkbfile \
-	+libxshmfence +pixman +libnettle +xkbcomp +xkeyboard-config
+	+libxshmfence +pixman +libnettle +xkbcomp
 endef
 
 define Package/xlibre/description

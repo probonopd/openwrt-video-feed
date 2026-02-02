@@ -53,16 +53,14 @@ jobs:
           echo "src-link video $GITHUB_WORKSPACE/video" >> feeds.conf.default
           # Update and install feeds
           ./scripts/feeds update -a
-          ./scripts/feeds install -a -p video
-          
-      - name: Build host tools
-        run: |
-          cd sdk
-          # Build host Python first to avoid SRE module mismatch
-          # Unset PYTHONPATH to avoid conflicts with system Python
-          unset PYTHONPATH
-          export PATH="$PWD/staging_dir/host/bin:$PATH"
-          make package/python3/host/compile V=s -j$(nproc) || make package/python3/host/compile V=s
+          # Install only the X11 packages we need, not all packages from video feed
+          # This avoids broken packages like xkeyboard-config and mesa
+          ./scripts/feeds install xorgproto xorg-macros libxtrans xcb-proto \
+            libxau libxdmcp libxcb libx11 libxext libxfixes libxrender libxrandr \
+            libxi libxinerama libxshmfence libice libsm libxt libxmu libxpm libxaw \
+            libxfont2 libxkbfile libxft libpciaccess libxcvt xlibre \
+            xf86-input-evdev xf86-input-libinput xkbcomp xauth xinit xrandr xterm \
+            nettle libmtdev pixman libdrm libfontenc zlib libpng freetype libbz2
 
       - name: Build X11 core libraries
         run: |
@@ -167,12 +165,6 @@ jobs:
           
           echo "Building libxcvt..."
           make package/libxcvt/compile V=s
-
-      - name: Build X11 keyboard config
-        run: |
-          cd sdk
-          echo "Building xkeyboard-config..."
-          make package/xkeyboard-config/compile V=s
 
       - name: Build XLibre X server
         run: |

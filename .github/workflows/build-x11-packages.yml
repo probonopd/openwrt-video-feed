@@ -86,11 +86,13 @@ jobs:
 
       - name: Build X11 core libraries
         run: |
+          set +e  # Don't exit on error for defconfig
           cd sdk
           # Enable packages for build
           # Protocol and build infrastructure
           # Note: defconfig may warn about missing menu items but this is OK
-          make defconfig || true
+          make defconfig
+          set -e  # Re-enable exit on error
           
           # Build core X11 protocol packages first
           echo "Building xorgproto..."

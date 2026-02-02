@@ -14,10 +14,15 @@ on:
       - '.github/workflows/gershwin-build.yml'
   workflow_dispatch:
 
+env:
+  # Use a directory outside the workspace to avoid file system loops
+  SDK_DIR: ${{ github.workspace }}/../openwrt-sdk
+
 jobs:
   build:
     name: Build Gershwin (${{ matrix.target }})
     runs-on: ubuntu-latest
+    timeout-minutes: 240  # 4 hours
     strategy:
       fail-fast: false
       matrix:
@@ -41,15 +46,16 @@ jobs:
 
       - name: Download and extract SDK
         run: |
-          mkdir -p sdk
-          cd sdk
+          # Create SDK directory outside workspace to avoid file system loops
+          mkdir -p "$SDK_DIR"
+          cd "$SDK_DIR"
           wget -q "${{ matrix.sdk_url }}" -O sdk.tar.zst
           tar --zstd -xf sdk.tar.zst --strip-components=1
           rm sdk.tar.zst
 
       - name: Setup SDK feeds
         run: |
-          cd sdk
+          cd "$SDK_DIR"
           
           # Add the video feed (this repository)
           echo "src-link video ${{ github.workspace }}" >> feeds.conf.default
@@ -60,7 +66,7 @@ jobs:
 
       - name: Build host LLVM/Clang
         run: |
-          cd sdk
+          cd "$SDK_DIR"
           
           # Configure for building
           make defconfig
@@ -73,7 +79,7 @@ jobs:
 
       - name: Build Gershwin packages
         run: |
-          cd sdk
+          cd "$SDK_DIR"
           
           # Build all Gershwin packages (in dependency order)
           PACKAGES=(
@@ -119,11 +125,11 @@ jobs:
       - name: List built packages
         run: |
           echo "=== Built packages ==="
-          find sdk/bin -name "*.ipk" -type f | head -50
+          find "$SDK_DIR/bin" -name "*.ipk" -type f | head -50
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: gershwin-packages-${{ matrix.target }}
-          path: sdk/bin/packages/
+          path: ${{ github.workspace }}/../openwrt-sdk/bin/packages/
           retention-days: 7

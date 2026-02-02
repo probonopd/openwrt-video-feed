@@ -44,6 +44,12 @@ jobs:
             libncurses5-dev libelf-dev python3 python3-pip python3-setuptools \
             rsync swig unzip zlib1g-dev file wget zstd cmake ninja-build
 
+      - name: Configure Git for large repos
+        run: |
+          git config --global http.postBuffer 524288000
+          git config --global http.lowSpeedLimit 0
+          git config --global http.lowSpeedTime 999999
+
       - name: Download and extract SDK
         run: |
           # Create SDK directory outside workspace to avoid file system loops
@@ -60,8 +66,22 @@ jobs:
           # Add the video feed (this repository)
           echo "src-link video ${{ github.workspace }}" >> feeds.conf.default
           
-          # Update and install feeds
-          ./scripts/feeds update -a
+          # Update feeds with retry logic
+          i=0
+          max=5
+          until [ $i -ge $max ]
+          do
+            ./scripts/feeds update -a && break
+            i=$((i+1))
+            echo "Feed update attempt $i failed, retrying in 15 seconds..."
+            sleep 15
+          done
+          if [ $i -eq $max ]; then
+            echo "Feed update failed after $max attempts"
+            exit 1
+          fi
+          
+          # Install feeds
           ./scripts/feeds install -a -p video
 
       - name: Build host LLVM/Clang
@@ -82,7 +102,7 @@ jobs:
           cd "$SDK_DIR"
           
           # Build all Gershwin packages (in dependency order)
-          PACKAGES=(
+          PACKAGES="
             gershwin-system
             gershwin-assets
             swift-corelibs-libdispatch
@@ -113,9 +133,9 @@ jobs:
             gershwin-console
             gershwin-sudoaskpass
             gershwin-processes
-          )
+          "
           
-          for pkg in "${PACKAGES[@]}"; do
+          for pkg in $PACKAGES; do
             echo "=========================================="
             echo "Building package: $pkg"
             echo "=========================================="

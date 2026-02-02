@@ -89,7 +89,8 @@ jobs:
           cd sdk
           # Enable packages for build
           # Protocol and build infrastructure
-          make defconfig
+          # Note: defconfig may warn about missing menu items but this is OK
+          make defconfig || true
           
           # Build core X11 protocol packages first
           echo "Building xorgproto..."

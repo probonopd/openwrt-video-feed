@@ -54,6 +54,15 @@ jobs:
           # Update and install feeds
           ./scripts/feeds update -a
           ./scripts/feeds install -a -p video
+          
+      - name: Build host tools
+        run: |
+          cd sdk
+          # Build host Python first to avoid SRE module mismatch
+          # Unset PYTHONPATH to avoid conflicts with system Python
+          unset PYTHONPATH
+          export PATH="$PWD/staging_dir/host/bin:$PATH"
+          make package/python3/host/compile V=s -j$(nproc) || make package/python3/host/compile V=s
 
       - name: Build X11 core libraries
         run: |
@@ -158,6 +167,12 @@ jobs:
           
           echo "Building libxcvt..."
           make package/libxcvt/compile V=s
+
+      - name: Build X11 keyboard config
+        run: |
+          cd sdk
+          echo "Building xkeyboard-config..."
+          make package/xkeyboard-config/compile V=s
 
       - name: Build XLibre X server
         run: |

@@ -15,7 +15,7 @@ PKG_LICENSE_FILES:=COPYING
 PKG_INSTALL:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/libXpm-$(PKG_VERSION)
-PKG_BUILD_DEPENDS:=xorgproto
+PKG_BUILD_DEPENDS:=xorgproto gettext-full/host
 
 include $(INCLUDE_DIR)/package.mk
 

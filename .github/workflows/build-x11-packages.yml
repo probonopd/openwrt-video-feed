@@ -186,6 +186,15 @@ jobs:
           echo "Building xf86-input-libinput..."
           make package/xf86-input-libinput/compile V=s
 
+      - name: Build X11 video drivers
+        run: |
+          cd sdk
+          echo "Building xf86-video-fbdev..."
+          make package/xf86-video-fbdev/compile V=s
+          
+          echo "Building xf86-video-vesa..."
+          make package/xf86-video-vesa/compile V=s
+
       - name: Build X11 utilities
         run: |
           cd sdk
@@ -201,8 +210,8 @@ jobs:
           echo "Building xrandr..."
           make package/xrandr/compile V=s
           
-          # echo "Building xterm..."
-          # make package/xterm/compile V=s
+          echo "Building xterm..."
+          make package/xterm/compile V=s
 
       - name: Collect build results
         run: |

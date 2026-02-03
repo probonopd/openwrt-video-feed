@@ -201,8 +201,8 @@ jobs:
           echo "Building xrandr..."
           make package/xrandr/compile V=s
           
-          echo "Building xterm..."
-          make package/xterm/compile V=s
+          # echo "Building xterm..."
+          # make package/xterm/compile V=s
 
       - name: Collect build results
         run: |

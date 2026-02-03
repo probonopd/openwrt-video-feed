@@ -44,12 +44,6 @@ jobs:
             libncurses5-dev libelf-dev python3 python3-pip python3-setuptools \
             rsync swig unzip zlib1g-dev file wget zstd cmake ninja-build
 
-      - name: Configure Git for large repos
-        run: |
-          git config --global http.postBuffer 524288000
-          git config --global http.lowSpeedLimit 0
-          git config --global http.lowSpeedTime 999999
-
       - name: Download and extract SDK
         run: |
           # Create SDK directory outside workspace to avoid file system loops
@@ -59,30 +53,17 @@ jobs:
           tar --zstd -xf sdk.tar.zst --strip-components=1
           rm sdk.tar.zst
 
-      - name: Setup SDK feeds
+      - name: Configure feeds
         run: |
           cd "$SDK_DIR"
+          # Clear the existing feeds.conf.default to avoid duplicates
+          echo "" > feeds.conf.default
           
-          # Add the video feed (this repository)
-          echo "src-link video ${{ github.workspace }}" >> feeds.conf.default
-          
-          # Update feeds with retry logic
-          i=0
-          max=5
-          until [ $i -ge $max ]
-          do
-            ./scripts/feeds update -a && break
-            i=$((i+1))
-            echo "Feed update attempt $i failed, retrying in 15 seconds..."
-            sleep 15
-          done
-          if [ $i -eq $max ]; then
-            echo "Feed update failed after $max attempts"
-            exit 1
-          fi
-          
-          # Install feeds
-          ./scripts/feeds install -a -p video
+          # Add the video feed (our local checkout)
+          echo "src-link video $GITHUB_WORKSPACE/video" >> feeds.conf.default
+          # Add feeds from GitHub
+          echo "src-git base https://github.com/openwrt/openwrt.git" >> feeds.conf.default
+          echo "src-git packages https://github.com/openwrt/packages.git" >> feeds.conf.default 
 
       - name: Build host LLVM/Clang
         run: |

@@ -25,7 +25,7 @@ define Package/xterm
   TITLE:=X terminal emulator
   URL:=https://invisible-island.net/xterm/
   DEPENDS:=+libx11 +libxft +libxaw +libxmu +libxt +libxext +libxinerama \
-	+ncurses +xlibre
+	+ncurses +libncursesw +xlibre
 endef
 
 define Package/xterm/description

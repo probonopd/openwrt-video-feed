@@ -49,14 +49,20 @@ jobs:
       - name: Configure feeds
         run: |
           cd sdk
+          # Clear the existing feeds.conf.default to avoid duplicates
+          echo "" > feeds.conf.default
+          
           # Add the video feed (our local checkout)
           echo "src-link video $GITHUB_WORKSPACE/video" >> feeds.conf.default
-          # Update and install feeds to use GitHub
+          # Add feeds from GitHub
           echo "src-git base https://github.com/openwrt/openwrt.git" >> feeds.conf.default
           echo "src-git packages https://github.com/openwrt/packages.git" >> feeds.conf.default 
+          
           # Update and install feeds
           ./scripts/feeds update -a
           ./scripts/feeds install -a -p video
+        shell: /usr/bin/bash -e {0}
+
 
       - name: Build X11 core libraries
         run: |

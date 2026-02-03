@@ -51,6 +51,9 @@ jobs:
           cd sdk
           # Add the video feed (our local checkout)
           echo "src-link video $GITHUB_WORKSPACE/video" >> feeds.conf.default
+          # Update and install feeds to use GitHub
+          echo "src-git base https://github.com/openwrt/openwrt.git" >> feeds.conf.default
+          echo "src-git packages https://github.com/openwrt/packages.git" >> feeds.conf.default 
           # Update and install feeds
           ./scripts/feeds update -a
           ./scripts/feeds install -a -p video

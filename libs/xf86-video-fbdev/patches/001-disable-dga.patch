@@ -1,0 +1,13 @@
+--- a/src/fbdev.c
++++ b/src/fbdev.c
+@@ -18,7 +18,9 @@
+ #include "micmap.h"
+ #include "colormapst.h"
+ #include "xf86cmap.h"
++#ifdef XFreeXDGA
+ #include "shadow.h"
+ #include "dgaproc.h"
++#endif
+ 
+ /* for visuals */
+ #include "fb.h"

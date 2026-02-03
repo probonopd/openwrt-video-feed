@@ -1,13 +1,79 @@
---- a/src/fbdev.c
-+++ b/src/fbdev.c
+--- xf86-video-fbdev-0.5.1.orig/src/fbdev.c	2026-02-03 20:17:58.994625376 +0000
++++ xf86-video-fbdev-0.5.1/src/fbdev.c	2026-02-03 20:19:38.786061608 +0000
 @@ -18,7 +18,9 @@
- #include "micmap.h"
  #include "colormapst.h"
  #include "xf86cmap.h"
-+#ifdef XFreeXDGA
  #include "shadow.h"
++#ifdef XFreeXDGA
  #include "dgaproc.h"
 +#endif
  
  /* for visuals */
  #include "fb.h"
+@@ -63,7 +65,9 @@
+ static void *	FBDevWindowLinear(ScreenPtr pScreen, CARD32 row, CARD32 offset, int mode,
+ 				  CARD32 *size, void *closure);
+ static void	FBDevPointerMoved(ScrnInfoPtr pScrn, int x, int y);
++#ifdef XFreeXDGA
+ static Bool	FBDevDGAInit(ScrnInfoPtr pScrn, ScreenPtr pScreen);
++#endif
+ static Bool	FBDevDriverFunc(ScrnInfoPtr pScrn, xorgDriverFuncOp op,
+ 				pointer ptr);
+ 
+@@ -184,9 +188,11 @@
+ 	CreateScreenResourcesProcPtr	CreateScreenResources;
+ 	void				(*PointerMoved)(ScrnInfoPtr pScrn, int x, int y);
+ 	EntityInfoPtr			pEnt;
++#ifdef XFreeXDGA
+ 	/* DGA info */
+ 	DGAModePtr			pDGAMode;
+ 	int				nDGAMode;
++#endif
+ 	OptionInfoPtr			Options;
+ } FBDevRec, *FBDevPtr;
+ 
+@@ -920,10 +926,14 @@
+ 	    return FALSE;
+ 	}
+ 
++#ifdef XFreeXDGA
+ 	if (!fPtr->rotate)
+ 	  FBDevDGAInit(pScrn, pScreen);
+ 	else {
+ 	  xf86DrvMsg(pScrn->scrnIndex, X_INFO, "display rotated; disabling DGA\n");
++#else
++	if (fPtr->rotate) {
++#endif
+ 	  xf86DrvMsg(pScrn->scrnIndex, X_INFO, "using driver rotation; disabling "
+ 			                "XRandR\n");
+ #if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 24
+@@ -1014,11 +1024,13 @@
+ 	    free(fPtr->shadow);
+ 	    fPtr->shadow = NULL;
+ 	}
++#ifdef XFreeXDGA
+ 	if (fPtr->pDGAMode) {
+ 	  free(fPtr->pDGAMode);
+ 	  fPtr->pDGAMode = NULL;
+ 	  fPtr->nDGAMode = 0;
+ 	}
++#endif
+ 	pScrn->vtSema = FALSE;
+ 
+ 	pScreen->CreateScreenResources = fPtr->CreateScreenResources;
+@@ -1088,6 +1100,7 @@
+ }
+ 
+ 
++#ifdef XFreeXDGA
+ /***********************************************************************
+  * DGA stuff
+  ***********************************************************************/
+@@ -1233,6 +1246,7 @@
+     return TRUE;
+ #endif
+ }
++#endif /* XFreeXDGA */
+ 
+ static Bool
+ FBDevDriverFunc(ScrnInfoPtr pScrn, xorgDriverFuncOp op, pointer ptr)

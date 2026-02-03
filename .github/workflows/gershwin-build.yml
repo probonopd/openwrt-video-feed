@@ -53,17 +53,21 @@ jobs:
           tar --zstd -xf sdk.tar.zst --strip-components=1
           rm sdk.tar.zst
 
-      - name: Configure feeds
+      - name: Setup SDK feeds
         run: |
           cd "$SDK_DIR"
-          # Clear the existing feeds.conf.default to avoid duplicates
-          echo "" > feeds.conf.default
           
-          # Add the video feed (our local checkout)
-          echo "src-link video $GITHUB_WORKSPACE/video" >> feeds.conf.default
-          # Add feeds from GitHub
-          echo "src-git base https://github.com/openwrt/openwrt.git" >> feeds.conf.default
-          echo "src-git packages https://github.com/openwrt/packages.git" >> feeds.conf.default 
+          # Add the video feed (this repository) to the existing feeds
+          echo "src-link video ${{ github.workspace }}" >> feeds.conf.default
+          
+          # Update all feeds
+          ./scripts/feeds update -a
+          
+          # Install LLVM package from video feed first (needed for host build)
+          ./scripts/feeds install -p video llvm
+          
+          # Install all packages from video feed
+          ./scripts/feeds install -a -p video
 
       - name: Build host LLVM/Clang
         run: |
@@ -73,10 +77,11 @@ jobs:
           make defconfig
           
           # Build host LLVM/Clang first (required for cross-compilation)
+          # Use the feeds path since llvm is installed from the video feed
           echo "=========================================="
           echo "Building host LLVM/Clang (this may take a while)..."
           echo "=========================================="
-          make package/llvm/host/compile V=s -j$(nproc) || make package/llvm/host/compile V=s -j1
+          make package/feeds/video/llvm/host/compile V=s -j$(nproc) || make package/feeds/video/llvm/host/compile V=s -j1
 
       - name: Build Gershwin packages
         run: |
@@ -120,7 +125,8 @@ jobs:
             echo "=========================================="
             echo "Building package: $pkg"
             echo "=========================================="
-            make package/$pkg/compile V=s || echo "Warning: $pkg failed to build"
+            # Use feeds path since packages are installed from the video feed
+            make package/feeds/video/$pkg/compile V=s || echo "Warning: $pkg failed to build"
           done
 
       - name: List built packages

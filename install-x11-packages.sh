@@ -167,6 +167,9 @@ install_if_exists libxcvt
 log_info "Installing XLibre X server..."
 install_if_exists xlibre
 
+log_info "Installing input libraries..."
+install_if_exists libinput
+
 log_info "Installing X11 input drivers..."
 install_if_exists xf86-input-evdev
 install_if_exists xf86-input-libinput

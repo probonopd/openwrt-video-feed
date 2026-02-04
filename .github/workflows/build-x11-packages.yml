@@ -223,10 +223,105 @@ jobs:
           echo "=== Package count ==="
           find bin/packages -name "*.ipk" -type f 2>/dev/null | wc -l || echo "0"
 
-      - name: Upload built packages
+      - name: Generate package feed index
+        run: |
+          cd sdk
+          # Generate Packages index for each architecture/feed
+          for arch_dir in bin/packages/*; do
+            if [ -d "$arch_dir" ]; then
+              echo "Generating package index for $(basename $arch_dir)..."
+              for feed_dir in "$arch_dir"/*; do
+                if [ -d "$feed_dir" ]; then
+                  echo "  Processing feed: $(basename $feed_dir)"
+                  ./staging_dir/host/bin/usign -G -s "$feed_dir/key-build" -p "$feed_dir/key-build.pub" -c "Local build key" 2>/dev/null || true
+                  ./scripts/ipkg-make-index.sh "$feed_dir" > "$feed_dir/Packages"
+                  gzip -9c "$feed_dir/Packages" > "$feed_dir/Packages.gz"
+                  # Sign the package index if possible
+                  if [ -f "$feed_dir/key-build" ]; then
+                    ./staging_dir/host/bin/usign -S -m "$feed_dir/Packages" -s "$feed_dir/key-build" 2>/dev/null || true
+                  fi
+                  echo "  Generated Packages index with $(grep -c '^Package:' "$feed_dir/Packages" 2>/dev/null || echo 0) packages"
+                fi
+              done
+            fi
+          done
+
+      - name: Create distribution archive
+        run: |
+          cd sdk
+          mkdir -p dist
+          
+          # Copy installer script to dist
+          cp "$GITHUB_WORKSPACE/video/install-x11-packages.sh" dist/
+          chmod +x dist/install-x11-packages.sh
+          
+          # Copy packages with feed structure
+          cp -r bin/packages dist/
+          
+          # Create README for the distribution
+          cat > dist/README.txt << 'EOF'
+          OpenWrt Video Feed - X11 Packages Distribution
+          ===============================================
+          
+          This archive contains pre-built X11 packages for OpenWrt including the
+          XLibre X server and related drivers and utilities.
+          
+          Installation:
+          ------------
+          1. Extract this archive to your OpenWrt device
+          2. Run the installer script as root:
+             chmod +x install-x11-packages.sh
+             ./install-x11-packages.sh
+          
+          Manual Installation:
+          -------------------
+          If you prefer to install packages manually, you can use opkg:
+          
+          1. Add the local feed to /etc/opkg/customfeeds.conf:
+             echo "src/gz video_local file:///path/to/packages/<arch>/video" >> /etc/opkg/customfeeds.conf
+          
+          2. Update package lists:
+             opkg update
+          
+          3. Install desired packages:
+             opkg install xlibre xf86-video-fbdev xinit
+          
+          Package Structure:
+          -----------------
+          packages/
+            └── <architecture>/
+                └── video/
+                    ├── Packages       (Package index)
+                    ├── Packages.gz    (Compressed index)
+                    └── *.ipk          (Package files)
+          
+          For more information, visit:
+          https://github.com/probonopd/openwrt-video-feed
+          EOF
+          
+          # Create the zip archive
+          cd dist
+          zip -r "../x11-packages-${{ matrix.target }}.zip" .
+          cd ..
+          
+          echo "=== Distribution Archive ==="
+          ls -lh "x11-packages-${{ matrix.target }}.zip"
+          echo ""
+          echo "=== Archive Contents ==="
+          unzip -l "x11-packages-${{ matrix.target }}.zip" | head -30
+
+      - name: Upload distribution archive
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: x11-packages-${{ matrix.target }}
+          name: x11-packages-${{ matrix.target }}-distribution
+          path: sdk/x11-packages-${{ matrix.target }}.zip
+          if-no-files-found: warn
+
+      - name: Upload built packages (raw)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: x11-packages-${{ matrix.target }}-raw
           path: sdk/bin/packages/
           if-no-files-found: warn

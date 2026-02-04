@@ -55,10 +55,14 @@ endef
 define Package/libinput/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lib*.so.* $(1)/usr/lib/
-	$(INSTALL_DIR) $(1)/usr/libexec/libinput
-	$(CP) $(PKG_INSTALL_DIR)/usr/libexec/libinput/* $(1)/usr/libexec/libinput/ 2>/dev/null || true
+	# Install libinput command-line tool
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/libinput $(1)/usr/bin/ 2>/dev/null || true
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/libinput $(1)/usr/bin/
+	# Install libexec helpers if they exist (optional, version-dependent)
+	if [ -d $(PKG_INSTALL_DIR)/usr/libexec/libinput ]; then \
+		$(INSTALL_DIR) $(1)/usr/libexec/libinput; \
+		$(CP) $(PKG_INSTALL_DIR)/usr/libexec/libinput/* $(1)/usr/libexec/libinput/ || true; \
+	fi
 endef
 
 $(eval $(call BuildPackage,libinput))

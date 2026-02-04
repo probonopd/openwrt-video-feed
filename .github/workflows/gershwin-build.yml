@@ -15,8 +15,10 @@ on:
   workflow_dispatch:
 
 env:
-  # Use a directory outside the workspace to avoid file system loops
-  SDK_DIR: ${{ github.workspace }}/../openwrt-sdk
+  # Use /home/runner/openwrt-sdk to avoid relative path issues with upload-artifact
+  SDK_DIR: /home/runner/openwrt-sdk
+  # Cache key version - increment to invalidate cache
+  CACHE_VERSION: v1
 
 jobs:
   build:
@@ -46,7 +48,7 @@ jobs:
 
       - name: Download and extract SDK
         run: |
-          # Create SDK directory outside workspace to avoid file system loops
+          # Create SDK directory with absolute path to avoid issues
           mkdir -p "$SDK_DIR"
           cd "$SDK_DIR"
           wget -q "${{ matrix.sdk_url }}" -O sdk.tar.zst
@@ -73,9 +75,23 @@ jobs:
           ./scripts/feeds install -a -p video
           
           # Verify llvm symlink exists
-          ls -la package/feeds/video/ | head -10
+          ls -la package/feeds/video/ | head -20
+
+      - name: Restore LLVM host cache
+        id: cache-llvm
+        uses: actions/cache@v4
+        with:
+          path: |
+            /home/runner/openwrt-sdk/staging_dir/host
+            /home/runner/openwrt-sdk/staging_dir/hostpkg
+            /home/runner/openwrt-sdk/build_dir/host
+            /home/runner/openwrt-sdk/build_dir/hostpkg
+          key: llvm-host-${{ env.CACHE_VERSION }}-${{ matrix.target }}-${{ hashFiles('libs/llvm/Makefile', 'libs/spirv-headers/Makefile', 'libs/spirv-tools/Makefile') }}
+          restore-keys: |
+            llvm-host-${{ env.CACHE_VERSION }}-${{ matrix.target }}-
 
       - name: Build host LLVM/Clang
+        if: steps.cache-llvm.outputs.cache-hit != 'true'
         run: |
           cd "$SDK_DIR"
           
@@ -88,12 +104,25 @@ jobs:
           echo "Building host LLVM/Clang (this may take a while)..."
           echo "=========================================="
           make package/feeds/video/llvm/host/compile V=s -j$(nproc) || make package/feeds/video/llvm/host/compile V=s -j1
+          
+          # Verify clang was built
+          ls -la staging_dir/host/llvm-mesa/bin/ || echo "LLVM binaries not found"
+
+      - name: Verify LLVM cache restored
+        if: steps.cache-llvm.outputs.cache-hit == 'true'
+        run: |
+          cd "$SDK_DIR"
+          echo "LLVM cache was restored successfully"
+          ls -la staging_dir/host/llvm-mesa/bin/ || echo "Warning: LLVM binaries not found in cache"
+          # Run defconfig to ensure proper configuration
+          make defconfig
 
       - name: Build Gershwin packages
         run: |
           cd "$SDK_DIR"
           
           # Build all Gershwin packages (in dependency order)
+          # Core libraries first, then data packages, then apps
           PACKAGES="
             gershwin-system
             gershwin-assets
@@ -138,11 +167,25 @@ jobs:
       - name: List built packages
         run: |
           echo "=== Built packages ==="
-          find "$SDK_DIR/bin" -name "*.ipk" -type f | head -50
+          find "$SDK_DIR/bin" -name "*.ipk" -type f 2>/dev/null | head -50 || echo "No packages found"
+
+      - name: Prepare artifacts
+        run: |
+          # Copy built packages to workspace for upload (avoids relative path issues)
+          mkdir -p ${{ github.workspace }}/artifacts
+          if [ -d "$SDK_DIR/bin/packages" ]; then
+            cp -r "$SDK_DIR/bin/packages/"* ${{ github.workspace }}/artifacts/ 2>/dev/null || echo "No packages to copy"
+          fi
+          if [ -d "$SDK_DIR/bin/targets" ]; then
+            cp -r "$SDK_DIR/bin/targets/"* ${{ github.workspace }}/artifacts/ 2>/dev/null || echo "No target packages to copy"
+          fi
+          echo "=== Artifacts prepared ==="
+          find ${{ github.workspace }}/artifacts -name "*.ipk" -type f 2>/dev/null | head -30 || echo "No .ipk files found"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: gershwin-packages-${{ matrix.target }}
-          path: ${{ github.workspace }}/../openwrt-sdk/bin/packages/
+          path: ${{ github.workspace }}/artifacts/
           retention-days: 7
+          if-no-files-found: warn

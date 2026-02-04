@@ -14,6 +14,7 @@ PKG_LICENSE_FILES:=COPYING
 
 PKG_INSTALL:=1
 
+# Note: This driver builds against XLibre ABI, not Xorg ABI.
 PKG_BUILD_DEPENDS:=xlibre xorgproto
 
 include $(INCLUDE_DIR)/package.mk

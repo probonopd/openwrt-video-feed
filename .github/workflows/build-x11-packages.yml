@@ -177,6 +177,12 @@ jobs:
           echo "Building xlibre..."
           make package/xlibre/compile V=s
 
+      - name: Build libinput
+        run: |
+          cd sdk
+          echo "Building libinput (without libwacom to avoid glib)..."
+          make package/libinput/compile V=s
+
       - name: Build X11 input drivers
         run: |
           cd sdk

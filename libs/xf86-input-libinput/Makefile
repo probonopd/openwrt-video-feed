@@ -15,10 +15,9 @@ PKG_LICENSE_FILES:=COPYING
 PKG_INSTALL:=1
 
 # Note: This driver builds against XLibre ABI, not Xorg ABI.
-# The libinput dependency should be built without libwacom support
-# to avoid pulling in glib as a dependency. Ensure libinput is configured
-# with -Dlibwacom=false in the OpenWrt packages feed.
-PKG_BUILD_DEPENDS:=xlibre xorgproto
+# This package depends on our locally-built libinput (from this feed)
+# which has libwacom disabled to prevent glib dependency.
+PKG_BUILD_DEPENDS:=xlibre xorgproto libinput
 
 include $(INCLUDE_DIR)/package.mk
 

@@ -30,14 +30,10 @@ This feed uses **XLibre** instead of the traditional X.Org server. XLibre is a f
 
 All X11 driver packages (xf86-input-*, xf86-video-*) in this feed are built against the **XLibre ABI**, not the Xorg ABI. This is ensured through the `PKG_BUILD_DEPENDS:=xlibre xorgproto` declaration in their Makefiles.
 
-### libwacom Dependency
+### Avoiding glib Dependency
 
-The `xf86-input-libinput` package depends on `libinput` from the OpenWrt packages feed. To avoid pulling in `glib` as a dependency (which would significantly increase the size), **libinput should be built with libwacom support disabled**.
+This feed includes its own **libinput** package built without libwacom support to prevent the glib dependency chain (libinput → libwacom → glib). The locally-built libinput is configured with:
+- `-Dlibwacom=false` - Disables tablet support requiring libwacom (and glib)
+- `-Ddebug-gui=false` - Disables debug GUI requiring gtk/cairo (and glib)
 
-When building the OpenWrt packages feed, ensure that `libinput` is configured with the `-Dlibwacom=false` meson option to prevent the glib dependency chain:
-- libinput → libwacom → glib
-
-This can be achieved by modifying the libinput package in the OpenWrt packages feed to include:
-```makefile
-MESON_ARGS += -Dlibwacom=false
-```
+This ensures that installing X11 packages from this feed will not pull in glib, significantly reducing the dependency footprint.

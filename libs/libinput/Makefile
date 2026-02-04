@@ -44,8 +44,8 @@ MESON_ARGS += \
 	-Dzshcompletiondir=no
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/include/libinput
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/libinput/*.h $(1)/usr/include/libinput/
+	$(INSTALL_DIR) $(1)/usr/include
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/libinput.h $(1)/usr/include/
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lib*.so* $(1)/usr/lib/
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig

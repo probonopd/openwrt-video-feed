@@ -63,6 +63,10 @@ jobs:
           ./scripts/feeds install -a -p video
         shell: /usr/bin/bash -e {0}
 
+      - name: Fix sha256 command for package indexing
+        run: |
+          cd sdk/staging_dir/host/bin
+          ln -sf /usr/bin/sha256sum sha256 || true
 
       - name: Build X11 core libraries
         run: |

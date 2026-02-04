@@ -53,22 +53,27 @@ jobs:
           tar --zstd -xf sdk.tar.zst --strip-components=1
           rm sdk.tar.zst
 
-      - name: Configure feeds
+      - name: Setup SDK feeds
         run: |
           cd "$SDK_DIR"
-          # Clear the existing feeds.conf.default to avoid duplicates
-          echo "" > feeds.conf.default
           
-          # Add the video feed (our local checkout)
-          echo "src-link video $GITHUB_WORKSPACE/video" >> feeds.conf.default
-          # Add feeds from GitHub
-          echo "src-git base https://github.com/openwrt/openwrt.git" >> feeds.conf.default
-          echo "src-git packages https://github.com/openwrt/packages.git" >> feeds.conf.default 
+          # Add the video feed (this repository) - note: the repo itself is the feed
+          echo "src-link video ${{ github.workspace }}" >> feeds.conf.default
           
-          # Update and install feeds
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a -p video llvm
-        shell: /usr/bin/bash -e {0}
+          # Show feed configuration
+          cat feeds.conf.default
+          
+          # Update the video feed only (we don't need other feeds for now)
+          ./scripts/feeds update video
+          
+          # Install LLVM and its dependencies first (required for host build)
+          ./scripts/feeds install -p video llvm spirv-headers spirv-tools
+          
+          # Install all Gershwin packages from the video feed
+          ./scripts/feeds install -a -p video
+          
+          # Verify llvm symlink exists
+          ls -la package/feeds/video/ | head -10
 
       - name: Build host LLVM/Clang
         run: |

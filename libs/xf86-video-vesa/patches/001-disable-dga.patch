@@ -1,0 +1,75 @@
+diff -urN xf86-video-vesa-2.6.0.orig/src/vesa.c xf86-video-vesa-2.6.0/src/vesa.c
+--- xf86-video-vesa-2.6.0.orig/src/vesa.c	2026-02-03 20:17:58.997625385 +0000
++++ xf86-video-vesa-2.6.0/src/vesa.c	2026-02-03 20:20:34.377342555 +0000
+@@ -144,7 +144,9 @@
+     shadowUpdatePacked(pScreen, pBuf);
+ }
+ 
++#ifdef XFreeXDGA
+ static Bool VESADGAInit(ScrnInfoPtr pScrn, ScreenPtr pScreen);
++#endif
+ 
+ enum GenericTypes
+ {
+@@ -1149,7 +1151,9 @@
+         return FALSE;
+     }
+ 
++#ifdef XFreeXDGA
+     VESADGAInit(pScrn, pScreen);
++#endif
+ 
+     xf86SetBlackWhitePixels(pScreen);
+     xf86SetBackingStore(pScreen);
+@@ -1220,11 +1224,13 @@
+ 	shadowRemove(pScreen, pScreen->GetScreenPixmap(pScreen));
+ 	free(pVesa->shadow);
+     }
++#ifdef XFreeXDGA
+     if (pVesa->pDGAMode) {
+ 	free(pVesa->pDGAMode);
+ 	pVesa->pDGAMode = NULL;
+ 	pVesa->nDGAMode = 0;
+     }
++#endif
+     pScrn->vtSema = FALSE;
+ 
+     pScrn->EnableDisableFBAccess = pVesa->EnableDisableFBAccess;
+@@ -1784,6 +1790,7 @@
+     VBEDPMSSet(pVesa->pVbe, mode);
+ }
+ 
++#ifdef XFreeXDGA
+ /***********************************************************************
+  * DGA stuff
+  ***********************************************************************/
+@@ -1923,3 +1930,4 @@
+     return (DGAInit(pScreen, &VESADGAFunctions,
+ 	    pVesa->pDGAMode, pVesa->nDGAMode));
+ }
++#endif /* XFreeXDGA */
+diff -urN xf86-video-vesa-2.6.0.orig/src/vesa.h xf86-video-vesa-2.6.0/src/vesa.h
+--- xf86-video-vesa-2.6.0.orig/src/vesa.h	2026-02-03 20:17:58.997625385 +0000
++++ xf86-video-vesa-2.6.0/src/vesa.h	2026-02-03 20:19:57.586174275 +0000
+@@ -60,7 +60,9 @@
+ #include "xf86int10.h"
+ 
+ /* Dga definitions */
++#ifdef XFreeXDGA
+ #include "dgaproc.h"
++#endif
+ 
+ #include "fb.h"
+ 
+@@ -103,9 +105,11 @@
+     CARD32 windowAoffset;
+     /* Don't override the default refresh rate. */
+     Bool defaultRefresh;
++#ifdef XFreeXDGA
+     /* DGA info */
+     DGAModePtr pDGAMode;
+     int nDGAMode;
++#endif
+     CloseScreenProcPtr CloseScreen;
+     CreateScreenResourcesProcPtr CreateScreenResources;
+     xf86EnableDisableFBAccessProc *EnableDisableFBAccess;

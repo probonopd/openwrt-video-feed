@@ -14,7 +14,10 @@ PKG_LICENSE_FILES:=COPYING
 
 PKG_INSTALL:=1
 
-PKG_BUILD_DEPENDS:=xlibre xorgproto
+# Note: This driver builds against XLibre ABI, not Xorg ABI.
+# This package depends on our locally-built libinput (from this feed)
+# which has libwacom disabled to prevent glib dependency.
+PKG_BUILD_DEPENDS:=xlibre xorgproto libinput
 
 include $(INCLUDE_DIR)/package.mk
 

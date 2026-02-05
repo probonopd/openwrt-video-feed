@@ -1,0 +1,203 @@
+name: Build Gershwin Packages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'gershwin/**'
+      - '.github/workflows/gershwin-build.yml'
+  pull_request:
+    paths:
+      - 'gershwin/**'
+      - '.github/workflows/gershwin-build.yml'
+  workflow_dispatch:
+
+env:
+  # Use /home/runner/openwrt-sdk to avoid relative path issues with upload-artifact
+  SDK_DIR: /home/runner/openwrt-sdk
+  # Cache key version - increment to invalidate cache
+  CACHE_VERSION: v1
+
+jobs:
+  build:
+    name: Build Gershwin (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 600
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86-generic
+            sdk_url: https://downloads.openwrt.org/releases/24.10.5/targets/x86/generic/openwrt-sdk-24.10.5-x86-generic_gcc-13.3.0_musl.Linux-x86_64.tar.zst
+          - target: bcm27xx-bcm2711
+            sdk_url: https://downloads.openwrt.org/releases/24.10.5/targets/bcm27xx/bcm2711/openwrt-sdk-24.10.5-bcm27xx-bcm2711_gcc-13.3.0_musl.Linux-x86_64.tar.zst
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang flex bison g++ gawk \
+            gcc-multilib gettext git libffi-dev libncurses-dev libssl-dev \
+            libncurses5-dev libelf-dev python3 python3-pip python3-setuptools \
+            rsync swig unzip zlib1g-dev file wget zstd cmake ninja-build
+
+      - name: Download and extract SDK
+        run: |
+          # Create SDK directory with absolute path to avoid issues
+          mkdir -p "$SDK_DIR"
+          cd "$SDK_DIR"
+          wget -q "${{ matrix.sdk_url }}" -O sdk.tar.zst
+          tar --zstd -xf sdk.tar.zst --strip-components=1
+          rm sdk.tar.zst
+
+      - name: Setup SDK feeds
+        run: |
+          cd "$SDK_DIR"
+          
+          # Add the video feed (this repository) - note: the repo itself is the feed
+          echo "src-link video ${{ github.workspace }}" >> feeds.conf.default
+          
+          # Show feed configuration
+          cat feeds.conf.default
+          
+          # Update all feeds - we need packages/base for dependencies like libxml2, libffi, icu
+          ./scripts/feeds update -a
+          
+          # Install dependencies from packages/base feeds first
+          # These are needed by gnustep-base, gnustep-gui, gnustep-back
+          ./scripts/feeds install libxml2 libxslt libffi icu gnutls zlib
+          ./scripts/feeds install libjpeg-turbo libtiff libpng giflib fontconfig
+          ./scripts/feeds install libcurl
+          
+          # Install LLVM and its dependencies from video feed (required for host build)
+          ./scripts/feeds install -p video llvm spirv-headers spirv-tools
+          
+          # Install cairo from video feed (provides libcairo)
+          ./scripts/feeds install -p video cairo
+          
+          # Install all Gershwin packages from the video feed
+          ./scripts/feeds install -a -p video
+          
+          # Verify package symlinks exist
+          echo "=== Installed packages from feeds ==="
+          ls -la package/feeds/ | head -10
+          ls package/feeds/packages/ 2>/dev/null | head -20 || echo "packages feed empty"
+          ls package/feeds/video/ 2>/dev/null | head -20 || echo "video feed empty"
+
+      - name: Restore LLVM host cache
+        id: cache-llvm
+        uses: actions/cache@v4
+        with:
+          path: |
+            /home/runner/openwrt-sdk/staging_dir/host
+            /home/runner/openwrt-sdk/staging_dir/hostpkg
+            /home/runner/openwrt-sdk/build_dir/host
+            /home/runner/openwrt-sdk/build_dir/hostpkg
+          key: llvm-host-${{ env.CACHE_VERSION }}-${{ matrix.target }}-${{ hashFiles('libs/llvm/Makefile', 'libs/spirv-headers/Makefile', 'libs/spirv-tools/Makefile') }}
+          restore-keys: |
+            llvm-host-${{ env.CACHE_VERSION }}-${{ matrix.target }}-
+
+      - name: Build host LLVM/Clang
+        if: steps.cache-llvm.outputs.cache-hit != 'true'
+        run: |
+          cd "$SDK_DIR"
+          
+          # Configure for building
+          make defconfig
+          
+          # Build host LLVM/Clang first (required for cross-compilation)
+          # Use the feeds path since llvm is installed from the video feed
+          echo "=========================================="
+          echo "Building host LLVM/Clang (this may take a while)..."
+          echo "=========================================="
+          make package/feeds/video/llvm/host/compile V=s -j$(nproc) || make package/feeds/video/llvm/host/compile V=s -j1
+          
+          # Verify clang was built
+          ls -la staging_dir/host/llvm-mesa/bin/ || echo "LLVM binaries not found"
+
+      - name: Verify LLVM cache restored
+        if: steps.cache-llvm.outputs.cache-hit == 'true'
+        run: |
+          cd "$SDK_DIR"
+          echo "LLVM cache was restored successfully"
+          ls -la staging_dir/host/llvm-mesa/bin/ || echo "Warning: LLVM binaries not found in cache"
+          # Run defconfig to ensure proper configuration
+          make defconfig
+
+      - name: Build Gershwin packages
+        run: |
+          cd "$SDK_DIR"
+          
+          # Build all Gershwin packages (in dependency order)
+          # Core libraries first, then data packages, then apps
+          PACKAGES="
+            gershwin-system
+            gershwin-assets
+            swift-corelibs-libdispatch
+            gnustep-make
+            libobjc2
+            gnustep-base
+            gnustep-gui
+            gnustep-back
+            gershwin-plistupdate
+            gershwin-workspace
+            gershwin-systempreferences
+            gershwin-eau-theme
+            gershwin-terminal
+            gershwin-textedit
+            gershwin-xcbkit
+            gershwin-windowmanager
+            gershwin-menu
+            gershwin-loginwindow
+            gershwin-appwrap
+            gershwin-display
+            gershwin-keyboard
+            gershwin-globalshortcuts
+            gershwin-screenshot
+            gershwin-printers
+            gershwin-network
+            gershwin-sound
+            gershwin-sharing
+            gershwin-console
+            gershwin-sudoaskpass
+            gershwin-processes
+          "
+          
+          for pkg in $PACKAGES; do
+            echo "=========================================="
+            echo "Building package: $pkg"
+            echo "=========================================="
+            # Use feeds path since packages are installed from the video feed
+            make package/feeds/video/$pkg/compile V=s || echo "Warning: $pkg failed to build"
+          done
+
+      - name: List built packages
+        run: |
+          echo "=== Built packages ==="
+          find "$SDK_DIR/bin" -name "*.ipk" -type f 2>/dev/null | head -50 || echo "No packages found"
+
+      - name: Prepare artifacts
+        run: |
+          # Copy built packages to workspace for upload (avoids relative path issues)
+          mkdir -p ${{ github.workspace }}/artifacts
+          if [ -d "$SDK_DIR/bin/packages" ]; then
+            cp -r "$SDK_DIR/bin/packages/"* ${{ github.workspace }}/artifacts/ 2>/dev/null || echo "No packages to copy"
+          fi
+          if [ -d "$SDK_DIR/bin/targets" ]; then
+            cp -r "$SDK_DIR/bin/targets/"* ${{ github.workspace }}/artifacts/ 2>/dev/null || echo "No target packages to copy"
+          fi
+          echo "=== Artifacts prepared ==="
+          find ${{ github.workspace }}/artifacts -name "*.ipk" -type f 2>/dev/null | head -30 || echo "No .ipk files found"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: gershwin-packages-${{ matrix.target }}
+          path: ${{ github.workspace }}/artifacts/
+          retention-days: 7
+          if-no-files-found: warn

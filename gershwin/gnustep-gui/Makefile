@@ -27,7 +27,7 @@ define Package/gnustep-gui
   SUBMENU:=GNUstep
   TITLE:=GNUstep GUI Library
   URL:=https://github.com/gnustep/libs-gui
-  DEPENDS:=+gnustep-base +libpng +libjpeg +libtiff +giflib +libcairo +libfreetype +fontconfig
+  DEPENDS:=+gnustep-base +libpng +libjpeg-turbo +libtiff +giflib +libcairo +libfreetype +fontconfig
 endef
 
 define Package/gnustep-gui/description

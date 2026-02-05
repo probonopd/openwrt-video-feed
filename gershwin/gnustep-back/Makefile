@@ -27,7 +27,7 @@ define Package/gnustep-back
   SUBMENU:=GNUstep
   TITLE:=GNUstep Backend
   URL:=https://github.com/gnustep/libs-back
-  DEPENDS:=+gnustep-gui +libcairo +libX11 +libXft +libXext
+  DEPENDS:=+gnustep-gui +libcairo
 endef
 
 define Package/gnustep-back/description
@@ -42,6 +42,11 @@ CLANG_TARGET_TRIPLE:=$(subst muslgnueabi,musleabi,$(subst openwrt,unknown,$(REAL
 
 MAKE_FLAGS += \
 	fonts=no
+
+# Use Cairo graphics backend without X11 for initial build
+CONFIGURE_ARGS += \
+	--enable-graphics=cairo \
+	--enable-server=headless
 
 CONFIGURE_VARS += \
 	CC="$(CLANG_PATH)/clang --target=$(CLANG_TARGET_TRIPLE) --sysroot=$(TOOLCHAIN_DIR)" \

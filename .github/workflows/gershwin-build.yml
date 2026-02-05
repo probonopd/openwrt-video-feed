@@ -65,17 +65,29 @@ jobs:
           # Show feed configuration
           cat feeds.conf.default
           
-          # Update the video feed only (we don't need other feeds for now)
-          ./scripts/feeds update video
+          # Update all feeds - we need packages/base for dependencies like libxml2, libffi, icu
+          ./scripts/feeds update -a
           
-          # Install LLVM and its dependencies first (required for host build)
+          # Install dependencies from packages/base feeds first
+          # These are needed by gnustep-base, gnustep-gui, gnustep-back
+          ./scripts/feeds install libxml2 libxslt libffi icu gnutls zlib
+          ./scripts/feeds install libjpeg-turbo libtiff libpng giflib fontconfig
+          ./scripts/feeds install libcurl
+          
+          # Install LLVM and its dependencies from video feed (required for host build)
           ./scripts/feeds install -p video llvm spirv-headers spirv-tools
+          
+          # Install cairo from video feed (provides libcairo)
+          ./scripts/feeds install -p video cairo
           
           # Install all Gershwin packages from the video feed
           ./scripts/feeds install -a -p video
           
-          # Verify llvm symlink exists
-          ls -la package/feeds/video/ | head -20
+          # Verify package symlinks exist
+          echo "=== Installed packages from feeds ==="
+          ls -la package/feeds/ | head -10
+          ls package/feeds/packages/ 2>/dev/null | head -20 || echo "packages feed empty"
+          ls package/feeds/video/ 2>/dev/null | head -20 || echo "video feed empty"
 
       - name: Restore LLVM host cache
         id: cache-llvm

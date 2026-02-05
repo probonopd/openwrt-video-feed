@@ -14,7 +14,7 @@ PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
 
 # Require host clang for cross-compilation with -fblocks support
-PKG_BUILD_DEPENDS:=cmake/host llvm/host
+PKG_BUILD_DEPENDS:=llvm/host
 
 CMAKE_BINARY_SUBDIR:=Build
 CMAKE_INSTALL:=1

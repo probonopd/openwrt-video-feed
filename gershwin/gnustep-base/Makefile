@@ -27,8 +27,8 @@ define Package/gnustep-base
   SUBMENU:=GNUstep
   TITLE:=GNUstep Base Library
   URL:=https://github.com/gnustep/libs-base
-  DEPENDS:=+libobjc2 +gnustep-make +swift-corelibs-libdispatch +libxml2 +libxslt \
-           +gnutls +libffi +libicu +zlib
+  DEPENDS:=+libobjc2 +gnustep-make +swift-corelibs-libdispatch \
+           +libxml2 +libxslt +libgnutls +libffi +icu +zlib +libcurl
 endef
 
 define Package/gnustep-base/description

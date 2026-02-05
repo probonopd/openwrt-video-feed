@@ -14,7 +14,7 @@ PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
 
 # Require host clang for cross-compilation with Objective-C support
-PKG_BUILD_DEPENDS:=cmake/host llvm/host gnustep-make swift-corelibs-libdispatch
+PKG_BUILD_DEPENDS:=llvm/host gnustep-make swift-corelibs-libdispatch
 
 CMAKE_BINARY_SUBDIR:=Build
 CMAKE_INSTALL:=1
